@@ -53,8 +53,8 @@
 
 ```bash
 # 克隆仓库
-git clone https://github.com/your-repo/robot-vision-motion-system.git
-cd robot-vision-motion-system
+git clone https://github.com/wuhanjia945/robot-project.git
+cd robot-project
 
 # 配置环境变量（可选，启用 LLM 功能时需要）
 cp backend/.env.example backend/.env
