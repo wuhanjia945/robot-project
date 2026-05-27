@@ -1,0 +1,40 @@
+version: "3.8"
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: robot-system-backend
+    ports:
+      - "9500:9500"
+    volumes:
+      - ./backend/data:/app/data
+    environment:
+      - APP_HOST=0.0.0.0
+      - APP_PORT=9500
+      - APP_DEBUG=false
+      - APP_LLM_ENABLED=false
+      - APP_LLM_PROVIDER=openai
+      - APP_LLM_API_KEY=
+      - APP_LLM_API_BASE=https://api.openai.com/v1
+      - APP_LLM_MODEL=gpt-4o-mini
+      - APP_LLM_FALLBACK_ENABLED=true
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:9500/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: robot-system-frontend
+    ports:
+      - "5180:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped

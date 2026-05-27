@@ -1,0 +1,32 @@
+category: 端侧部署
+items:
+  - name: ONNX Runtime
+    version: "1.16+"
+    purpose: 跨平台模型推理
+    language: C++/Python
+    license: MIT
+    compatibility: [Linux, Windows, ARM, NVIDIA GPU]
+    tags: [inference, onnx, cross_platform]
+    description: 微软开源推理引擎，支持CPU/GPU/NPU多种后端
+    url: https://onnxruntime.ai
+    difficulty: 2
+  - name: TensorRT
+    version: "8.6+"
+    purpose: NVIDIA GPU推理加速
+    language: C++/Python
+    license: NVIDIA License
+    compatibility: [Linux, NVIDIA GPU]
+    tags: [inference, nvidia, gpu, optimization]
+    description: NVIDIA推理优化引擎，INT8/FP16量化加速
+    url: https://developer.nvidia.com/tensorrt
+    difficulty: 3
+  - name: RKNN Toolkit2
+    version: "2.0+"
+    purpose: 瑞芯微NPU推理部署
+    language: Python/C++
+    license: MIT
+    compatibility: [RK3588, RK3568]
+    tags: [inference, rknpu, embedded, rockchip]
+    description: 瑞芯微NPU模型部署工具，支持RK3588/RK3568平台
+    url: https://github.com/rockchip-linux/rknn-toolkit2
+    difficulty: 3

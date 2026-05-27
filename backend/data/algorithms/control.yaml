@@ -1,0 +1,159 @@
+category: 控制算法
+algorithms:
+  - name: PID控制器
+    level: basic
+    applicable_robots: [wheeled, diff_drive, mecanum, arm, quadruped, humanoid]
+    required_sensors: [encoder, imu]
+    required_compute: [STM32F103, STM32F4, ESP32]
+    description: 经典PID控制器，支持位置/速度/电流环控制
+    difficulty: 1
+    parameters:
+      - name: kp
+        type: float
+        range: [0.0, 100.0]
+        description: 比例增益
+      - name: ki
+        type: float
+        range: [0.0, 10.0]
+        default: 0.0
+        description: 积分增益
+      - name: kd
+        type: float
+        range: [0.0, 10.0]
+        default: 0.0
+        description: 微分增益
+      - name: output_limit
+        type: float
+        range: [0.0, 1000.0]
+        description: 输出限幅
+      - name: integral_limit
+        type: float
+        range: [0.0, 1000.0]
+        description: 积分限幅(抗饱和)
+    input_spec:
+      setpoint: float
+      feedback: float
+    output_spec:
+      control_output: float
+      error: float
+    code_template: pid_controller
+  - name: 级联PID控制器
+    level: basic
+    applicable_robots: [arm, quadruped, humanoid]
+    required_sensors: [encoder, imu]
+    required_compute: [STM32F4, ESP32, RASPBERRY_PI5]
+    description: 位置环+速度环+电流环级联PID，工业标准控制架构
+    difficulty: 2
+    parameters:
+      - name: position_kp
+        type: float
+        range: [0.0, 100.0]
+      - name: position_ki
+        type: float
+        default: 0.0
+      - name: position_kd
+        type: float
+        default: 0.0
+      - name: velocity_kp
+        type: float
+        range: [0.0, 100.0]
+      - name: velocity_ki
+        type: float
+        default: 0.0
+      - name: velocity_kd
+        type: float
+        default: 0.0
+    input_spec:
+      position_setpoint: float
+      position_feedback: float
+      velocity_feedback: float
+    output_spec:
+      control_output: float
+    code_template: cascade_pid
+  - name: 模型预测控制MPC
+    level: advanced
+    applicable_robots: [arm, quadruped, humanoid]
+    required_sensors: [encoder, imu, force_sensor]
+    required_compute: [RASPBERRY_PI5, JETSON_ORIN_NANO, IPC]
+    description: 基于动力学模型的预测控制，优化未来时域内的控制序列
+    difficulty: 4
+    parameters:
+      - name: prediction_horizon
+        type: int
+        default: 10
+        range: [5, 50]
+        description: 预测时域步数
+      - name: control_horizon
+        type: int
+        default: 5
+        range: [1, 20]
+        description: 控制时域步数
+      - name: dt
+        type: float
+        default: 0.01
+        unit: s
+        description: 控制周期
+      - name: state_weight
+        type: list[float]
+        description: 状态误差权重矩阵Q对角线
+      - name: control_weight
+        type: list[float]
+        description: 控制输入权重矩阵R对角线
+    input_spec:
+      current_state: list[float]
+      reference_trajectory: list[list[float]]
+    output_spec:
+      optimal_control: list[float]
+      predicted_states: list[list[float]]
+    code_template: mpc_controller
+  - name: 全身控制WBC
+    level: expert
+    applicable_robots: [quadruped, humanoid]
+    required_sensors: [encoder, imu, force_sensor]
+    required_compute: [JETSON_ORIN_NANO, IPC]
+    description: 全身控制 Whole Body Control，统一协调多任务优先级控制
+    difficulty: 5
+    parameters:
+      - name: tasks
+        type: list[dict]
+        description: 任务列表，每个任务含name/type/weight/reference
+      - name: contact_constraints
+        type: list[dict]
+        description: 接触约束配置
+      - name: torque_limits
+        type: list[float]
+        description: 关节力矩限制
+    input_spec:
+      robot_state: dict
+      task_references: dict
+    output_spec:
+      joint_torques: list[float]
+      contact_forces: list[list[float]]
+    code_template: wbc_controller
+  - name: 阻抗控制
+    level: advanced
+    applicable_robots: [arm, quadruped, humanoid]
+    required_sensors: [encoder, force_sensor]
+    required_compute: [STM32F4, RASPBERRY_PI5, JETSON_ORIN_NANO]
+    description: 阻抗控制，实现柔顺交互，适合人机协作和力控抓取
+    difficulty: 3
+    parameters:
+      - name: stiffness
+        type: float
+        range: [0.0, 10000.0]
+        description: 期望刚度
+      - name: damping
+        type: float
+        range: [0.0, 1000.0]
+        description: 期望阻尼
+      - name: inertia
+        type: float
+        range: [0.0, 100.0]
+        description: 期望惯量
+    input_spec:
+      desired_position: list[float]
+      current_position: list[float]
+      external_force: list[float]
+    output_spec:
+      control_torque: list[float]
+    code_template: impedance_controller

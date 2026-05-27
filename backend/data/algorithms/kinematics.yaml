@@ -1,0 +1,167 @@
+category: 运动学
+algorithms:
+  - name: 差速运动学
+    level: basic
+    applicable_robots: [wheeled, diff_drive]
+    required_sensors: [encoder]
+    required_compute: [STM32F103, STM32F4, ESP32]
+    description: 差速底盘的正逆运动学，根据左右轮速度计算底盘速度和位置
+    difficulty: 1
+    parameters:
+      - name: wheel_radius
+        type: float
+        unit: m
+        range: [0.01, 0.5]
+        description: 轮子半径
+      - name: wheel_base
+        type: float
+        unit: m
+        range: [0.05, 1.0]
+        description: 左右轮间距
+    input_spec:
+      left_wheel_velocity: float
+      right_wheel_velocity: float
+    output_spec:
+      linear_velocity: float
+      angular_velocity: float
+      x_position: float
+      y_position: float
+      theta: float
+    code_template: diff_drive_kinematics
+  - name: 麦轮全向运动学
+    level: basic
+    applicable_robots: [mecanum]
+    required_sensors: [encoder]
+    required_compute: [STM32F4, ESP32, RASPBERRY_PI5]
+    description: 麦克纳姆轮全向移动运动学，支持任意方向平移和旋转
+    difficulty: 2
+    parameters:
+      - name: wheel_radius
+        type: float
+        unit: m
+        range: [0.02, 0.15]
+      - name: wheel_base_x
+        type: float
+        unit: m
+        range: [0.1, 0.8]
+        description: 前后轮间距
+      - name: wheel_base_y
+        type: float
+        unit: m
+        range: [0.1, 0.6]
+        description: 左右轮间距
+      - name: roller_angle
+        type: float
+        unit: deg
+        default: 45
+        description: 麦轮辊子角度
+    input_spec:
+      vx: float
+      vy: float
+      omega: float
+    output_spec:
+      wheel_speeds: list[float]
+    code_template: mecanum_kinematics
+  - name: DH参数正运动学
+    level: basic
+    applicable_robots: [arm]
+    required_sensors: [encoder]
+    required_compute: [STM32F4, ESP32, RASPBERRY_PI5]
+    description: 基于DH参数的机械臂正运动学，从关节角度计算末端位姿
+    difficulty: 2
+    parameters:
+      - name: dh_params
+        type: list[list[float]]
+        description: DH参数表 [[a, alpha, d, theta], ...]
+      - name: joint_offsets
+        type: list[float]
+        description: 关节偏移量
+    input_spec:
+      joint_angles: list[float]
+    output_spec:
+      end_effector_pose: list[float]
+      transformation_matrix: list[list[float]]
+    code_template: dh_forward_kinematics
+  - name: 数值逆运动学
+    level: advanced
+    applicable_robots: [arm]
+    required_sensors: [encoder]
+    required_compute: [STM32F4, RASPBERRY_PI5, JETSON_ORIN_NANO]
+    description: 基于Jacobian的数值逆运动学求解，适用于任意构型机械臂
+    difficulty: 3
+    parameters:
+      - name: max_iterations
+        type: int
+        default: 100
+        range: [10, 1000]
+      - name: tolerance
+        type: float
+        default: 1e-4
+        range: [1e-6, 1e-2]
+      - name: damping_factor
+        type: float
+        default: 0.01
+        range: [0.001, 1.0]
+        description: 阻尼最小二乘法阻尼因子
+      - name: step_size
+        type: float
+        default: 0.5
+        range: [0.01, 1.0]
+    input_spec:
+      target_pose: list[float]
+      current_joint_angles: list[float]
+    output_spec:
+      joint_angles: list[float]
+      success: bool
+      error: float
+    code_template: numerical_ik
+  - name: 四足正运动学
+    level: basic
+    applicable_robots: [quadruped]
+    required_sensors: [encoder]
+    required_compute: [STM32F4, RASPBERRY_PI5]
+    description: 四足机器人腿部正运动学，从3个关节角度计算足端位置
+    difficulty: 2
+    parameters:
+      - name: hip_length
+        type: float
+        unit: m
+        range: [0.03, 0.2]
+      - name: thigh_length
+        type: float
+        unit: m
+        range: [0.05, 0.3]
+      - name: calf_length
+        type: float
+        unit: m
+        range: [0.05, 0.3]
+    input_spec:
+      joint_angles: list[float]
+      leg_index: int
+    output_spec:
+      foot_position: list[float]
+    code_template: quadruped_fk
+  - name: 四足逆运动学
+    level: basic
+    applicable_robots: [quadruped]
+    required_sensors: [encoder]
+    required_compute: [STM32F4, RASPBERRY_PI5]
+    description: 四足机器人腿部逆运动学，从足端目标位置计算3个关节角度
+    difficulty: 2
+    parameters:
+      - name: hip_length
+        type: float
+        unit: m
+      - name: thigh_length
+        type: float
+        unit: m
+      - name: calf_length
+        type: float
+        unit: m
+    input_spec:
+      foot_position: list[float]
+      leg_index: int
+    output_spec:
+      joint_angles: list[float]
+      reachable: bool
+    code_template: quadruped_ik

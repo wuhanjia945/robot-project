@@ -1,0 +1,103 @@
+category: 传感器
+items:
+  - name: MPU6050六轴IMU
+    brand: InvenSense
+    model: MPU6050
+    specs:
+      type: imu
+      axes: 6轴(3轴加速度+3轴陀螺仪)
+      accel_range: ±2/4/8/16g
+      gyro_range: ±250/500/1000/2000°/s
+      interface: I2C/SPI
+      sample_rate: 最高1kHz
+    price_min: 5
+    price_max: 15
+    currency: CNY
+    availability: available
+    compatibility_tags: [imu, i2c, basic]
+    applicable_robots: [wheeled, quadruped, drone, balancer]
+    notes: 最常用的低成本IMU，适合姿态估计
+  - name: BNO085九轴IMU
+    brand: Hillcrest Labs
+    model: BNO085
+    specs:
+      type: imu
+      axes: 9轴(6轴+3轴磁力计)
+      interface: I2C/SPI/UART
+      sample_rate: 最高400Hz
+      built_in_fusion: 融合算法内置
+      rotation_vector: 支持旋转向量输出
+    price_min: 45
+    price_max: 80
+    currency: CNY
+    availability: available
+    compatibility_tags: [imu, 9axis, fusion, intermediate]
+    applicable_robots: [quadruped, humanoid, drone, navigation_robot]
+    notes: 内置传感器融合算法，直接输出四元数/欧拉角
+  - name: USB摄像头 IMX219 800万像素
+    brand: 多品牌
+    model: IMX219-77IR
+    specs:
+      type: camera
+      resolution: 3280x2464
+      fps: 30@1080p, 90@720p
+      fov: 77°
+      interface: CSI/USB
+      infrared: 支持IR夜视
+    price_min: 35
+    price_max: 80
+    currency: CNY
+    availability: available
+    compatibility_tags: [camera, csi, jetson, rpi]
+    applicable_robots: [wheeled_advanced, arm_6dof, quadruped, drone]
+    notes: 树莓派/Jetson兼容摄像头，支持夜视
+  - name: Intel RealSense D435i深度相机
+    brand: Intel
+    model: D435i
+    specs:
+      type: depth_camera
+      rgb_resolution: 1920x1080
+      depth_range: 0.1-10m
+      depth_fps: 90@848x480
+      fov: 87°x58°
+      imu: 内置IMU
+      interface: USB3
+    price_min: 2200
+    price_max: 3200
+    currency: CNY
+    availability: available
+    compatibility_tags: [depth_camera, realsense, 3d, advanced]
+    applicable_robots: [arm_6dof, quadruped, humanoid, amr, navigation_robot]
+    notes: RGB-D深度相机，适合3D视觉/避障/SLAM
+  - name: RPLIDAR A1 2D激光雷达
+    brand: 思岚/Slamtec
+    model: RPLIDAR A1
+    specs:
+      type: lidar_2d
+      range: 12m
+      angular_resolution: 1°
+      scan_rate: 5.5Hz
+      interface: UART
+    price_min: 350
+    price_max: 500
+    currency: CNY
+    availability: available
+    compatibility_tags: [lidar, 2d, slam, navigation]
+    applicable_robots: [wheeled_advanced, amr, navigation_robot]
+    notes: 低成本2D激光雷达，适合室内SLAM导航
+  - name: 力传感器DYW1
+    brand: 宇叠科技
+    model: DYW1
+    specs:
+      type: force_sensor
+      dimensions: 1轴
+      range: 0-50kg
+      interface: I2C/ADC
+      accuracy: ±0.5%FS
+    price_min: 30
+    price_max: 80
+    currency: CNY
+    availability: available
+    compatibility_tags: [force, i2c, basic]
+    applicable_robots: [arm, gripper, quadruped_foot]
+    notes: 低成本力传感器，适合抓取力控/足端触地检测

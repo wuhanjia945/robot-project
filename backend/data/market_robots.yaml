@@ -1,0 +1,1343 @@
+robots:
+  - name: 扫地机器人
+    category: 家用服务
+    icon: vacuum
+    description: 自动清扫地面的家用机器人，是消费级机器人中出货量最大的品类
+    market_size: 年出货量超1500万台，中国市场占比超40%
+    price_range: 500-6000元
+    key_brands: [石头科技, 科沃斯, 追觅, iRobot, 云鲸]
+    tech_stack:
+      navigation: [SLAM, LDS激光雷达, vSLAM视觉导航, DTOF]
+      perception: [3D ToF避障, 结构光, 双目视觉, 超声波]
+      control: [路径规划算法, 覆盖算法, 弓字形/沿边清扫策略]
+      compute: [ARM Cortex-A系列, RK3308, 全志R系列]
+      software: [ROS/自研中间件, 手机APP, 语音交互]
+    core_algorithms:
+      - name: SLAM建图
+        description: 激光/视觉SLAM构建家庭地图，定位精度cm级
+        difficulty: 4
+      - name: 覆盖路径规划
+        description: 弓字形/沿边清扫策略，确保全覆盖不遗漏
+        difficulty: 3
+      - name: 动态避障
+        description: 3D ToF/结构光识别拖鞋/电线/宠物粪便等障碍物
+        difficulty: 3
+    diy_feasibility:
+      level: 中等
+      min_budget: 500
+      difficulty_reason: SLAM算法成熟开源方案多，但传感器融合和调参需要经验
+    recommended_stack:
+      controller: 树莓派5 + STM32
+      sensors: [RPLIDAR A1, MPU6050, 超声波x4]
+      motors: [TT马达x2, 吸尘电机]
+      framework: ROS2 + Nav2 + Cartographer
+    learning_path:
+      - step: 1
+        title: 搭建差速底盘
+        description: 用Arduino/STM32驱动两个TT马达，实现前进后退转弯
+      - step: 2
+        title: 加入激光雷达
+        description: 接入RPLIDAR，用ROS2发布LaserScan话题
+      - step: 3
+        title: SLAM建图
+        description: 用Cartographer/SLAM Toolbox构建房间地图
+      - step: 4
+        title: 自主导航
+        description: 用Nav2实现点对点导航和避障
+      - step: 5
+        title: 覆盖清扫
+        description: 实现弓字形路径规划，确保全覆盖
+    detailed_bom:
+      - item: Arduino UNO R3
+        quantity: 1
+        price: 25
+        specs: ATmega328P, 5V, 14数字IO
+        source: 淘宝/立创
+      - item: L298N电机驱动模块
+        quantity: 1
+        price: 10
+        specs: 双H桥, 2A/通道
+        source: 淘宝
+      - item: TT马达+轮子套装
+        quantity: 2
+        price: 12
+        specs: 1:48减速比, 3-6V, 200RPM
+        source: 淘宝
+      - item: 亚克力2层底盘套件
+        quantity: 1
+        price: 20
+        specs: 170x130mm, 含铜柱螺丝
+        source: 淘宝
+      - item: HC-SR04超声波模块
+        quantity: 1
+        price: 3
+        specs: 2-400cm, 精度3mm
+        source: 淘宝
+      - item: 18650电池+电池盒
+        quantity: 1
+        price: 15
+        specs: 3.7V 2600mAh x2, 含开关
+        source: 淘宝
+      - item: 杜邦线+螺丝包
+        quantity: 1
+        price: 8
+        specs: 公对母20根+M3螺丝包
+        source: 淘宝
+    implementation_path:
+      - phase: 硬件组装
+        steps:
+          - action: 组装差速底盘
+            detail: 将2个TT马达用M2螺丝固定在亚克力底层，安装万向轮，上层放Arduino和电池
+            time: 1小时
+          - action: 接线
+            detail: L298N的IN1-IN4接Arduino D5-D8，ENA/ENB接D9/D10(PWM)，马达接OUT1-OUT4，超声波Trig接D2/Echo接D3
+            time: 30分钟
+      - phase: 软件开发
+        steps:
+          - action: 安装Arduino IDE
+            detail: 下载arduino-ide 2.x，安装CH340驱动，选择板卡Arduino UNO
+            time: 20分钟
+          - action: 烧录电机驱动代码
+            detail: 使用analogWrite()控制PWM调速，digitalWrite()控制方向
+            code: "void moveForward() { analogWrite(ENA,200); analogWrite(ENB,200); digitalWrite(IN1,HIGH); digitalWrite(IN2,LOW); digitalWrite(IN3,HIGH); digitalWrite(IN4,LOW); }"
+            time: 1小时
+          - action: 超声波避障
+            detail: pulseIn()测距，距离<20cm时后退+转弯
+            code: "long dist = pulseIn(ECHO,HIGH)*0.034/2; if(dist<20) { moveBack(); delay(500); turnRight(); delay(300); } else { moveForward(); }"
+            time: 2小时
+      - phase: 进阶升级
+        steps:
+          - action: 换用树莓派+ROS2
+            detail: 安装ROS2 Humble，配置差速驱动节点，发布cmd_vel话题
+            time: 4小时
+          - action: 加入激光雷达SLAM
+            detail: 接入RPLIDAR A1，运行Cartographer建图
+            time: 3小时
+          - action: Nav2自主导航
+            detail: 配置Nav2，实现点对点导航和弓字形覆盖
+            time: 4小时
+    tech_framework:
+      perception:
+        sensors: [HC-SR04超声波, 红外避障模块(可选)]
+        algorithms: [距离测量, 简单避障逻辑]
+        data_flow: "超声波测距 → Arduino处理 → 电机控制"
+      control:
+        method: PWM直流调速
+        algorithm: 简单if-else避障 → ROS2 Nav2导航(进阶)
+        frequency: 10Hz(Arduino) / 20Hz(ROS2)
+      communication:
+        protocol: 串口UART(Arduino) / DDS(ROS2)
+        framework: Arduino原生 → ROS2 Humble
+    attachments:
+      tutorial:
+        title: "Arduino智能小车教程"
+        description: "Arduino差速底盘+超声波避障+蓝牙遥控的完整教程，含接线图和代码"
+        format: "在线教程"
+        status: "可用"
+        url: "https://www.hackster.io/amal-shaji/differential-drive-robot-using-ros2-and-esp32-aae289"
+      source_code:
+        title: "差速驱动机器人源代码"
+        description: "ESP32+micro-ROS差速驱动代码，含PID速度控制和里程计"
+        url: "https://github.com/amalshaji4540/diffdrive_ws"
+        language: "Arduino C++ / Python"
+        framework: "micro-ROS / ROS2 Humble"
+
+  - name: 割草机器人
+    category: 户外服务
+    icon: mower
+    description: 自动修剪草坪的户外机器人，欧美市场成熟，国内快速增长
+    market_size: 全球年出货量超300万台，欧洲市场占比最大
+    price_range: 2000-30000元
+    key_brands: [Husqvarna, Worx, 宝时得, 松灵机器人, 追觅]
+    tech_stack:
+      navigation: [RTK-GNSS定位, 视觉SLAM, 边界线感应]
+      perception: [超声波避障, 摄像头, 雨量传感器, 倾斜传感器]
+      control: [区域覆盖算法, 充电桩回归, 坡度适应]
+      compute: [ARM Cortex-A系列, ESP32]
+      software: [ROS2, 手机APP, GPS地图规划]
+    core_algorithms:
+      - name: RTK-GNSS定位
+        description: 厘米级GPS定位，实现无边界线草坪规划
+        difficulty: 4
+      - name: 区域覆盖算法
+        description: 高效覆盖整块草坪，避免重复和遗漏
+        difficulty: 3
+      - name: 充电桩回归
+        description: 低电量自动返回充电桩，充电后继续未完成区域
+        difficulty: 2
+    diy_feasibility:
+      level: 中高
+      min_budget: 1500
+      difficulty_reason: 户外环境复杂，需要防水防尘设计，RTK定位成本较高
+    recommended_stack:
+      controller: 树莓派5 + STM32
+      sensors: [RTK-GNSS模块, 超声波x4, 倾斜传感器, 雨量传感器]
+      motors: [无刷电机x2驱动轮, 草坪切割电机]
+      framework: ROS2 + Nav2 + 自研覆盖算法
+    learning_path:
+      - step: 1
+        title: 搭建户外底盘
+        description: 防水设计，无刷电机驱动，差速转向
+      - step: 2
+        title: 加入RTK定位
+        description: 接入RTK-GNSS模块，获取厘米级定位
+      - step: 3
+        title: 地图规划
+        description: 在APP上划定草坪边界和工作区域
+      - step: 4
+        title: 覆盖算法
+        description: 实现高效草坪覆盖路径
+      - step: 5
+        title: 自动充电
+        description: 实现低电量自动回充和断点续割
+    detailed_bom:
+      - item: 树莓派5 8GB
+        quantity: 1
+        price: 650
+        specs: BCM2712四核, 8GB LPDDR4X
+        source: 树莓派官方/淘宝
+      - item: STM32F407开发板
+        quantity: 1
+        price: 80
+        specs: 168MHz, 192KB RAM, 丰富IO
+        source: 淘宝/立创
+      - item: RTK-GNSS定位模块
+        quantity: 1
+        price: 800
+        specs: 厘米级定位, GPS+北斗
+        source: 淘宝/司南导航
+      - item: 无刷电机+驱动
+        quantity: 2
+        price: 200
+        specs: 24V 200W, ESC电调
+        source: 淘宝
+      - item: 草坪切割电机
+        quantity: 1
+        price: 150
+        specs: 24V 500W无刷, 含刀片
+        source: 淘宝
+      - item: 超声波模块HC-SR04
+        quantity: 4
+        price: 12
+        specs: 2-400cm测距
+        source: 淘宝
+      - item: 倾斜传感器MPU6050
+        quantity: 1
+        price: 8
+        specs: 6轴IMU
+        source: 淘宝
+      - item: 防水外壳+底盘
+        quantity: 1
+        price: 500
+        specs: IP65, 铝合金+ABS
+        source: 定制/淘宝
+      - item: 24V锂电池组
+        quantity: 1
+        price: 300
+        specs: 24V 10Ah, 含BMS
+        source: 淘宝
+    implementation_path:
+      - phase: 硬件组装
+        steps:
+          - action: 组装防水底盘
+            detail: 铝合金底盘+防水外壳，安装驱动轮和切割电机，确保IP65防水
+            time: 3小时
+          - action: 接线
+            detail: STM32驱动无刷电机(ESC信号线接PWM口)，RTK模块接树莓派USB，IMU接I2C
+            time: 1小时
+      - phase: 软件开发
+        steps:
+          - action: 树莓派+ROS2环境
+            detail: 安装ROS2 Humble，配置RTK-GNSS驱动，发布gps_fix话题
+            time: 2小时
+          - action: 覆盖路径规划
+            detail: 在APP上划定草坪边界，生成弓字形覆盖路径
+            time: 4小时
+          - action: 自动充电
+            detail: 低电量时导航回充电桩，对接充电触点
+            time: 3小时
+      - phase: 算法部署
+        steps:
+          - action: RTK定位校准
+            detail: 配置RTK基站或NTRIP服务，确保厘米级定位
+            time: 2小时
+          - action: 避障+坡度检测
+            detail: 超声波检测障碍物停止，IMU检测倾斜>30°停止
+            time: 2小时
+    tech_framework:
+      perception:
+        sensors: [RTK-GNSS, 超声波x4, MPU6050 IMU, 雨量传感器(可选)]
+        algorithms: [RTK定位, 超声波避障, 倾斜检测]
+        data_flow: "RTK定位 → 路径规划 → STM32电机控制 → 超声波避障中断"
+      control:
+        method: ESC无刷调速 + 切割电机开关
+        algorithm: 覆盖路径规划 + 充电桩回归
+        frequency: 10Hz
+      communication:
+        protocol: UART(STM32↔树莓派) + USB(RTK)
+        framework: ROS2 Humble
+    attachments:
+      tutorial:
+        title: "Open Mower 割草机器人教程"
+        description: "开源智能割草机器人完整教程，从硬件组装到ROS导航"
+        format: "在线教程(GitHub Wiki)"
+        status: "可用"
+        url: "https://github.com/ClemensElflein/OpenMower"
+      source_code:
+        title: "Open Mower ROS 开源割草机器人"
+        description: "基于ROS的智能割草机器人，含覆盖路径规划+RTK定位+自动回充"
+        url: "https://github.com/ClemensElflein/open_mower_ros"
+        language: "C++ / Python"
+        framework: "ROS Noetic"
+
+  - name: 送餐机器人
+    category: 商用服务
+    icon: delivery
+    description: 餐厅内自主导航送餐的商用机器人，国内市场爆发式增长
+    market_size: 国内年出货量超5万台，主要在餐饮/酒店场景
+    price_range: 20000-80000元
+    key_brands: [擎朗智能, 普渡科技, 云迹科技, 猎户星空]
+    tech_stack:
+      navigation: [多传感器融合SLAM, 激光雷达+视觉, 动态避障]
+      perception: [3D摄像头, 激光雷达, 超声波阵列, 人体检测]
+      control: [多楼层导航, 电梯对接, 托盘控制, 语音交互]
+      compute: [工控机/Jetson, ARM多核处理器]
+      software: [ROS2, 自研调度系统, 云端管理平台, 语音SDK]
+    core_algorithms:
+      - name: 多传感器融合SLAM
+        description: 激光+视觉+IMU融合，适应餐厅复杂动态环境
+        difficulty: 5
+      - name: 动态避障
+        description: 实时检测行人/椅子/玻璃门等动态障碍物
+        difficulty: 4
+      - name: 多机调度
+        description: 多台机器人协同调度，避免拥堵和碰撞
+        difficulty: 4
+    diy_feasibility:
+      level: 高
+      min_budget: 5000
+      difficulty_reason: 商用级SLAM和调度算法复杂，但简化版（单机单层）可DIY
+    recommended_stack:
+      controller: Jetson Orin Nano + STM32
+      sensors: [RPLIDAR A2/A3, Intel RealSense D435i, 超声波x6]
+      motors: [步进电机x2, 托盘升降舵机]
+      framework: ROS2 + Nav2 + Cartographer + 语音SDK
+    learning_path:
+      - step: 1
+        title: 搭建差速底盘+托盘
+        description: 铝合金底盘+多层托盘，步进电机驱动
+      - step: 2
+        title: 室内SLAM建图
+        description: 用激光雷达构建餐厅地图
+      - step: 3
+        title: 点对点导航
+        description: 实现从厨房到指定桌位的自主导航
+      - step: 4
+        title: 动态避障
+        description: 加入深度相机，实现行人避让
+      - step: 5
+        title: 语音+交互
+        description: 加入语音播报和触摸屏交互
+    detailed_bom:
+      - item: Jetson Orin Nano 8GB
+        quantity: 1
+        price: 1500
+        specs: 40TOPS AI算力, 8GB LPDDR5
+        source: NVIDIA官方/淘宝
+      - item: STM32F407开发板
+        quantity: 1
+        price: 80
+        specs: 168MHz, 下位机实时控制
+        source: 淘宝
+      - item: RPLIDAR A2激光雷达
+        quantity: 1
+        price: 800
+        specs: 18m范围, 10Hz, 0.36°分辨率
+        source: 思岚官方/淘宝
+      - item: Intel RealSense D435i
+        quantity: 1
+        price: 2500
+        specs: RGB-D深度相机, 0.1-10m
+        source: Intel官方/淘宝
+      - item: 步进电机+驱动42型
+        quantity: 2
+        price: 180
+        specs: 1.8°步距角, 1.33A, TMC2209驱动
+        source: 淘宝
+      - item: 超声波模块HC-SR04
+        quantity: 6
+        price: 18
+        specs: 2-400cm, 周围避障
+        source: 淘宝
+      - item: 铝合金底盘+托盘
+        quantity: 1
+        price: 800
+        specs: 3层托盘, 500x400mm
+        source: 定制/淘宝
+      - item: 24V锂电池组
+        quantity: 1
+        price: 300
+        specs: 24V 10Ah
+        source: 淘宝
+    implementation_path:
+      - phase: 硬件组装
+        steps:
+          - action: 组装底盘+托盘
+            detail: 铝合金底盘安装2个步进电机驱动轮+2个万向轮，3层托盘用铝柱支撑
+            time: 3小时
+          - action: 传感器安装
+            detail: 激光雷达装顶部中心，深度相机装前方，6个超声波分布在四周
+            time: 2小时
+      - phase: 软件开发
+        steps:
+          - action: Jetson+ROS2环境
+            detail: 安装JetPack 6.0 + ROS2 Humble，配置realsense-ros和rplidar-ros驱动
+            time: 3小时
+          - action: SLAM建图
+            detail: 运行Cartographer/SLAM Toolbox构建餐厅地图
+            time: 2小时
+          - action: Nav2导航
+            detail: 配置Nav2，设置餐厅桌位为目标点，实现点对点导航
+            time: 4小时
+      - phase: 算法部署
+        steps:
+          - action: 动态避障
+            detail: 深度相机检测行人，Nav2动态避障costmap更新
+            time: 3小时
+          - action: 语音交互
+            detail: 集成语音识别+TTS，到达桌位后播报"您的餐到了"
+            time: 2小时
+    tech_framework:
+      perception:
+        sensors: [RPLIDAR A2, RealSense D435i, 超声波x6]
+        algorithms: [Cartographer SLAM, YOLOv8行人检测, 超声波避障]
+        data_flow: "激光雷达→SLAM→Nav2路径规划→STM32电机控制 | 深度相机→行人检测→动态避障"
+      control:
+        method: 步进电机差速驱动
+        algorithm: Nav2 DWA局部规划器 + Cartographer SLAM
+        frequency: 20Hz
+      communication:
+        protocol: USB(雷达/相机) + UART(STM32) + DDS(ROS2)
+        framework: ROS2 Humble + Nav2 + Cartographer
+    attachments:
+      tutorial:
+        title: "Linorobot2 导航机器人教程"
+        description: "ROS2自主导航机器人搭建教程，从硬件到SLAM建图到Nav2导航"
+        format: "在线教程(GitHub Wiki)"
+        status: "可用"
+        url: "https://github.com/linorobot/linorobot2/wiki"
+      source_code:
+        title: "Linorobot2 自主导航机器人"
+        description: "ROS2自主导航机器人框架，支持差速/麦轮/全向轮底盘，含SLAM+Nav2"
+        url: "https://github.com/linorobot/linorobot2"
+        language: "Python / C++"
+        framework: "ROS2 Humble + Nav2"
+
+  - name: AGV/AMR
+    category: 工业物流
+    icon: agv
+    description: 工厂/仓库内自动搬运物料的移动机器人，工业4.0核心装备
+    market_size: 全球市场规模超50亿美元，年增长率超20%
+    price_range: 30000-200000元
+    key_brands: [极智嘉, 海康机器人, 快仓, 旷视, MiR]
+    tech_stack:
+      navigation: [激光SLAM, 视觉SLAM, 二维码导航, 磁条导航, 反射板导航]
+      perception: [2D/3D激光雷达, 工业相机, 货物检测传感器]
+      control: [路径规划, 多机调度, 充电管理, 货物对接]
+      compute: [工控机(i5/i7), FPGA, 实时系统]
+      software: [ROS2, 自研调度系统, WMS/MES对接, 数字孪生]
+    core_algorithms:
+      - name: 高精度SLAM
+        description: 工业级定位精度±10mm，支持大场景(万m²级)
+        difficulty: 5
+      - name: 多机调度系统
+        description: 百台级机器人协同调度，路径优化和死锁避免
+        difficulty: 5
+      - name: 精准对接
+        description: 与货架/工作站mm级精准对接
+        difficulty: 4
+    diy_feasibility:
+      level: 很高
+      min_budget: 3000
+      difficulty_reason: 简化版单机AGV可DIY，但多机调度和工业级精度需要专业团队
+    recommended_stack:
+      controller: 工控机 + STM32/PLC
+      sensors: [RPLIDAR A2/A3, 二维码相机, 超声波阵列]
+      motors: [伺服电机x2, 举升电机]
+      framework: ROS2 + Nav2 + 自研调度
+    learning_path:
+      - step: 1
+        title: 搭建麦克纳姆轮底盘
+        description: 4轮麦轮底盘，全向移动，伺服/步进驱动
+      - step: 2
+        title: 激光SLAM建图
+        description: 构建仓库/工厂地图
+      - step: 3
+        title: 路径规划与导航
+        description: 实现A到B的自主导航
+      - step: 4
+        title: 二维码定位
+        description: 地面二维码辅助精确定位
+      - step: 5
+        title: 货物对接
+        description: 实现与货架的自动对接和搬运
+    detailed_bom:
+      - item: 工控机(i5-12500)
+        quantity: 1
+        price: 2500
+        specs: 12代i5, 8GB RAM, 256GB SSD
+        source: 研华/淘宝
+      - item: STM32F407开发板
+        quantity: 1
+        price: 80
+        specs: 下位机实时控制
+        source: 淘宝
+      - item: RPLIDAR A3激光雷达
+        quantity: 1
+        price: 1500
+        specs: 25m范围, 15Hz
+        source: 思岚官方
+      - item: 二维码识别相机
+        quantity: 1
+        price: 200
+        specs: 工业相机, 30fps
+        source: 海康/淘宝
+      - item: 伺服电机+驱动器
+        quantity: 2
+        price: 1200
+        specs: 400W, 2500rpm, 含编码器
+        source: 台达/汇川
+      - item: 麦克纳姆轮底盘
+        quantity: 1
+        price: 2000
+        specs: 4轮麦轮, 铝合金, 500kg载重
+        source: 定制/淘宝
+      - item: 24V锂电池组
+        quantity: 1
+        price: 500
+        specs: 24V 20Ah
+        source: 淘宝
+    implementation_path:
+      - phase: 硬件组装
+        steps:
+          - action: 组装麦轮底盘
+            detail: 4个麦轮+4个伺服电机安装到底盘，确保轮子方向正确(左前/右后辊子朝右)
+            time: 4小时
+          - action: 电气接线
+            detail: 4个伺服驱动器接STM32(PWM/UART)，激光雷达和相机接工控机USB
+            time: 2小时
+      - phase: 软件开发
+        steps:
+          - action: 工控机+ROS2环境
+            detail: 安装Ubuntu 22.04 + ROS2 Humble，配置多机通信
+            time: 2小时
+          - action: 麦轮运动学
+            detail: 实现麦轮逆运动学，cmd_vel→4轮速度
+            time: 3小时
+          - action: SLAM+二维码定位
+            detail: 激光SLAM建图+地面二维码辅助精确定位(±5mm)
+            time: 4小时
+      - phase: 算法部署
+        steps:
+          - action: 路径规划+对接
+            detail: Nav2全局规划+局部避障，与货架mm级精准对接
+            time: 4小时
+          - action: 多机调度(可选)
+            detail: 实现简单调度系统，多台AGV路径协调和死锁避免
+            time: 8小时
+    tech_framework:
+      perception:
+        sensors: [RPLIDAR A3, 二维码相机, 超声波阵列(可选)]
+        algorithms: [激光SLAM, 二维码定位, 精准对接]
+        data_flow: "激光雷达→SLAM→Nav2规划→麦轮运动学→伺服驱动 | 二维码→精确定位修正"
+      control:
+        method: 伺服电机闭环控制
+        algorithm: 麦轮全向运动学 + Nav2路径规划 + 二维码精定位
+        frequency: 50Hz
+      communication:
+        protocol: EtherCAT/UART(伺服) + USB(雷达/相机) + DDS(ROS2)
+        framework: ROS2 Humble + Nav2
+    attachments:
+      tutorial:
+        title: "mick_robot 底盘搭建教程"
+        description: "从机械设计到底盘嵌入式控制到PCB设计的完整教程"
+        format: "在线教程(GitHub)"
+        status: "可用"
+        url: "https://github.com/RuPingCen/mick_robot_chassis"
+      source_code:
+        title: "mick_robot 麦轮/差速导航小车"
+        description: "开源麦轮/差速底盘导航项目，含底盘控制+Cartographer建图+Nav2导航"
+        url: "https://github.com/RuPingCen/mick_robot"
+        language: "C++ / Python"
+        framework: "ROS2 Humble"
+
+  - name: 物流配送机器人
+    category: 末端配送
+    icon: logistics
+    description: 最后一公里配送的户外自主移动机器人，快递/外卖场景
+    market_size: 国内试点运营超千台，政策逐步开放
+    price_range: 30000-100000元
+    key_brands: [京东, 美团, 阿里小蛮驴, 白犀牛, 优地科技]
+    tech_stack:
+      navigation: [多线激光雷达SLAM, GNSS+IMU组合导航, 高精地图]
+      perception: [多线激光雷达, 多目摄像头, 毫米波雷达, 超声波]
+      control: [户外路径规划, 红绿灯识别, 人行道行驶, 电梯对接]
+      compute: [工控机+GPU, 边缘计算单元]
+      software: [ROS2/Apollo, 深度学习感知, 云端调度, 远程监控]
+    core_algorithms:
+      - name: 多传感器融合感知
+        description: 激光+视觉+毫米波融合，应对复杂户外环境
+        difficulty: 5
+      - name: 户外SLAM
+        description: 大场景户外建图，支持GPS+IMU+激光融合
+        difficulty: 5
+      - name: 交通场景理解
+        description: 识别红绿灯/斑马线/行人/车辆，遵守交通规则
+        difficulty: 5
+    diy_feasibility:
+      level: 很高
+      min_budget: 5000
+      difficulty_reason: 完整版需要工业级传感器和算力，但封闭园区简化版可DIY
+    recommended_stack:
+      controller: Jetson Orin NX + STM32
+      sensors: [RPLIDAR A2, USB摄像头x2, GNSS模块, IMU]
+      motors: [无刷电机x2驱动轮, 舵机转向]
+      framework: ROS2 + Nav2 + FAST-LIO + YOLOv8
+    learning_path:
+      - step: 1
+        title: 搭建户外底盘
+        description: 防水设计，无刷电机驱动，足够载重空间
+      - step: 2
+        title: 室外SLAM
+        description: 用激光雷达+GNSS构建户外地图
+      - step: 3
+        title: 路径规划
+        description: 实现园区内点对点导航
+      - step: 4
+        title: 障碍物检测
+        description: 用YOLOv8识别行人/车辆/障碍物
+      - step: 5
+        title: 远程监控
+        description: 加入4G/5G模块，实现远程监控和接管
+    detailed_bom:
+      - item: Jetson Orin NX 16GB
+        quantity: 1
+        price: 3500
+        specs: 100TOPS AI算力, 16GB
+        source: NVIDIA官方
+      - item: STM32H743开发板
+        quantity: 1
+        price: 150
+        specs: 480MHz, 下位机实时控制
+        source: 淘宝
+      - item: RPLIDAR A2激光雷达
+        quantity: 1
+        price: 800
+        specs: 18m范围
+        source: 思岚官方
+      - item: USB摄像头
+        quantity: 2
+        price: 100
+        specs: 1080p, 前后各一个
+        source: 淘宝
+      - item: GNSS+IMU组合导航模块
+        quantity: 1
+        price: 600
+        specs: GPS+北斗+9轴IMU
+        source: 淘宝
+      - item: 无刷电机+驱动
+        quantity: 2
+        price: 400
+        specs: 24V 300W, 含编码器
+        source: 淘宝
+      - item: 舵机(转向)
+        quantity: 1
+        price: 50
+        specs: 20kg大扭矩
+        source: 淘宝
+      - item: 防水外壳+底盘
+        quantity: 1
+        price: 1500
+        specs: IP54, 货舱200L
+        source: 定制
+      - item: 4G模块+锂电池
+        quantity: 1
+        price: 500
+        specs: 4G上网, 24V 20Ah
+        source: 淘宝
+    implementation_path:
+      - phase: 硬件组装
+        steps:
+          - action: 组装户外底盘
+            detail: 阿克曼转向底盘，2个后驱无刷电机+前轮舵机转向，防水外壳
+            time: 5小时
+          - action: 传感器安装
+            detail: 激光雷达装顶部，前后摄像头，GNSS模块装车顶
+            time: 2小时
+      - phase: 软件开发
+        steps:
+          - action: Jetson+ROS2环境
+            detail: 安装JetPack + ROS2 Humble，配置GNSS驱动和FAST-LIO
+            time: 3小时
+          - action: 户外SLAM
+            detail: 使用FAST-LIO实现激光+GNSS+IMU融合SLAM
+            time: 4小时
+          - action: YOLOv8目标检测
+            detail: 训练/下载行人/车辆/红绿灯检测模型，TensorRT加速推理
+            time: 4小时
+      - phase: 算法部署
+        steps:
+          - action: 园区导航
+            detail: Nav2户外路径规划，GNSS辅助全局定位
+            time: 4小时
+          - action: 远程监控
+            detail: 4G模块实现远程监控和紧急接管
+            time: 3小时
+    tech_framework:
+      perception:
+        sensors: [RPLIDAR A2, USB摄像头x2, GNSS+IMU组合导航]
+        algorithms: [FAST-LIO融合SLAM, YOLOv8目标检测, GNSS定位]
+        data_flow: "激光+GNSS+IMU→FAST-LIO→Nav2规划→STM32驱动 | 摄像头→YOLOv8→避障决策"
+      control:
+        method: 阿克曼转向(后驱+前轮转向)
+        algorithm: FAST-LIO + Nav2 + YOLOv8避障
+        frequency: 20Hz
+      communication:
+        protocol: USB(雷达/相机) + UART(STM32) + 4G(远程) + DDS(ROS2)
+        framework: ROS2 Humble + FAST-LIO + YOLOv8
+    attachments:
+      tutorial:
+        title: "Project Ogre 麦轮机器人教程"
+        description: "5部分完整教程：硬件搭建→Isaac Sim数字孪生→SLAM→RL训练→Nav2导航"
+        format: "在线教程(博客)"
+        status: "可用"
+        url: "https://protomota.com/blog/project-ogre-part1-building-robot"
+      source_code:
+        title: "Project Ogre 麦轮导航机器人"
+        description: "Jetson Orin Nano麦轮机器人，含SLAM+Nav2+Isaac Sim仿真"
+        url: "https://github.com/protomota/ogre-teleop"
+        language: "Python / C++"
+        framework: "ROS2 Humble + Nav2 + Isaac Sim"
+
+  - name: 四足机器人
+    category: 仿生机器人
+    icon: quadruped
+    description: 模仿四足动物运动的仿生机器人，从实验室走向商业化
+    market_size: 科研+行业应用年出货数千台，增长迅速
+    price_range: 2000-300000元
+    key_brands: [宇树科技, 小米, 波士顿动力, ANYmal, 云深处]
+    tech_stack:
+      navigation: [视觉SLAM, 激光SLAM, 足端触地检测]
+      perception: [深度相机, IMU, 关节编码器, 足端力传感器]
+      control: [全身控制WBC, MPC, CPG步态生成, 逆运动学]
+      compute: [Jetson Orin, 工控机, FPGA]
+      software: [ROS2, MuJoCo/Isaac Sim仿真, 自研控制框架]
+    core_algorithms:
+      - name: CPG步态生成
+        description: 中央模式发生器产生节律步态(trot/walk/gallop)
+        difficulty: 4
+      - name: 全身控制WBC
+        description: 统一协调多任务(姿态+位置+力控)的优先级控制
+        difficulty: 5
+      - name: MPC运动控制
+        description: 模型预测控制优化足端落点和身体姿态
+        difficulty: 5
+    diy_feasibility:
+      level: 高
+      min_budget: 2000
+      difficulty_reason: 12个关节协调控制复杂，但舵机版入门门槛已大幅降低
+    recommended_stack:
+      controller: 树莓派5 + STM32F4
+      sensors: [BNO085 IMU, 总线舵机反馈, USB摄像头]
+      motors: [串行总线舵机x12]
+      framework: ROS2 + 自研步态控制 + Mujoco仿真
+    learning_path:
+      - step: 1
+        title: 理解运动学
+        description: 学习四足正逆运动学，理解足端位置与关节角度关系
+      - step: 2
+        title: 单腿控制
+        description: 实现单腿3自由度位置控制
+      - step: 3
+        title: 站立与平衡
+        description: 四腿站立，IMU反馈保持身体水平
+      - step: 4
+        title: 步态行走
+        description: 实现trot步态，交替对角腿摆动
+      - step: 5
+        title: 仿真到实物
+        description: 在Mujoco/Isaac Sim中验证算法后部署到实物
+    detailed_bom:
+      - item: 串行总线舵机(大扭矩)
+        quantity: 12
+        price: 150
+        specs: 30kg·cm@12V, 360°连续, 位置反馈
+        source: 飞特/淘宝
+      - item: 树莓派5 8GB
+        quantity: 1
+        price: 650
+        specs: 上位机, 运行ROS2和步态算法
+        source: 树莓派官方
+      - item: STM32F407开发板
+        quantity: 1
+        price: 80
+        specs: 下位机, 12路PWM输出
+        source: 淘宝
+      - item: BNO085九轴IMU
+        quantity: 1
+        price: 60
+        specs: 9轴, 内置融合算法
+        source: 淘宝
+      - item: USB摄像头
+        quantity: 1
+        price: 50
+        specs: 720p, 视觉导航
+        source: 淘宝
+      - item: 3D打印件+碳纤维板
+        quantity: 1
+        price: 300
+        specs: 4条腿+身体框架, PETG材质
+        source: 自3D打印/淘宝代打
+      - item: 3S锂电池+充电器
+        quantity: 1
+        price: 100
+        specs: 12V 3000mAh 30C
+        source: 淘宝
+      - item: 串口转换器+线材
+        quantity: 1
+        price: 50
+        specs: TTL转USB, 杜邦线
+        source: 淘宝
+    implementation_path:
+      - phase: 硬件组装
+        steps:
+          - action: 3D打印结构件
+            detail: 打印4条腿(每腿3段:髋/大腿/小腿)和身体框架，碳纤维板加固
+            time: 8小时(打印)
+          - action: 组装12个舵机
+            detail: 每条腿3个舵机(髋横滚/髋俯仰/膝)，确保舵机朝向和零位正确
+            time: 3小时
+          - action: 接线
+            detail: 12个总线舵机串联接STM32，IMU接I2C，摄像头接树莓派USB
+            time: 1小时
+      - phase: 软件开发
+        steps:
+          - action: 运动学建模
+            detail: 实现四足正逆运动学，足端位置↔3个关节角度互算
+            time: 4小时
+          - action: 站立平衡
+            detail: IMU反馈+PD控制保持身体水平，4足支撑相位
+            time: 3小时
+          - action: Trot步态
+            detail: 对角腿交替摆动(trot)，支撑相→摆动相切换，步态周期200ms
+            time: 6小时
+      - phase: 仿真到实机
+        steps:
+          - action: MuJoCo仿真
+            detail: 在MuJoCo中验证步态算法，调整参数
+            time: 4小时
+          - action: Sim2Real部署
+            detail: 仿真参数迁移到实机，调试摩擦力和延迟差异
+            time: 4小时
+    tech_framework:
+      perception:
+        sensors: [BNO085 IMU, 总线舵机编码器(12个), USB摄像头]
+        algorithms: [IMU姿态估计, 正逆运动学, 足端轨迹规划]
+        data_flow: "IMU→姿态估计→步态生成器→逆运动学→12路舵机控制 | 编码器→位置反馈闭环"
+      control:
+        method: 总线舵机位置控制
+        algorithm: CPG步态生成 + PD平衡控制 + 逆运动学
+        frequency: 100Hz(STM32) / 50Hz(步态)
+      communication:
+        protocol: UART总线(舵机) + I2C(IMU) + USB(相机) + UART(树莓派↔STM32)
+        framework: ROS2 + 自研步态控制 + MuJoCo仿真
+    attachments:
+      tutorial:
+        title: "3D打印四足机器人教程"
+        description: "从3D打印到12舵机组装到步态控制的完整图文教程"
+        format: "在线教程(Instructables)"
+        status: "可用"
+        url: "https://www.instructables.com/A-3D-Printed-Quadruped-Robot/"
+      source_code:
+        title: "Unitree Legged SDK + 开源四足方案"
+        description: "宇树官方SDK(四足控制)+Unitree RL Lab(强化学习)+开源四足DIY方案"
+        url: "https://github.com/unitreerobotics/unitree_legged_sdk"
+        language: "Python / C++"
+        framework: "unitree_legged_sdk + ROS2 + MuJoCo"
+
+  - name: 协作机械臂
+    category: 工业操作
+    icon: arm
+    description: 人机协作场景下安全操作的轻型机械臂，柔性制造核心设备
+    market_size: 全球市场规模超20亿美元，年增长率超30%
+    price_range: 30000-300000元
+    key_brands: [遨博, 节卡, 越疆, UR, Franka Emika]
+    tech_stack:
+      perception: [工业相机, 力/力矩传感器, 编码器]
+      control: [运动学/动力学, 力控/阻抗控制, 轨迹规划, 碰撞检测]
+      compute: [工控机, 实时系统, EtherCAT总线]
+      software: [ROS2 + MoveIt2, 自研控制框架, 示教编程]
+    core_algorithms:
+      - name: 运动学/动力学建模
+        description: DH参数建模，牛顿-欧拉动力学，是机械臂控制的基础
+        difficulty: 3
+      - name: 阻抗/力混合控制
+        description: 实现柔顺交互，人机协作安全保障
+        difficulty: 4
+      - name: 视觉伺服抓取
+        description: 手眼标定+视觉伺服，实现精准抓取
+        difficulty: 4
+    diy_feasibility:
+      level: 中等
+      min_budget: 1500
+      difficulty_reason: 舵机版入门简单，MoveIt2有成熟框架，但力控需要专业传感器
+    recommended_stack:
+      controller: 树莓派5 + 串口总线
+      sensors: [总线舵机编码器, USB摄像头, 力传感器(可选)]
+      motors: [串行总线舵机x6, 夹爪舵机x1]
+      framework: ROS2 + MoveIt2 + OpenCV
+    learning_path:
+      - step: 1
+        title: 组装机械臂
+        description: 3D打印结构件+6个总线舵机，完成机械组装
+      - step: 2
+        title: 正逆运动学
+        description: 实现关节角度↔末端位姿的互相计算
+      - step: 3
+        title: MoveIt2集成
+        description: 配置URDF+MoveIt2，实现路径规划和避障
+      - step: 4
+        title: 视觉抓取
+        description: 加入摄像头，实现ArUco标记定位+自动抓取
+      - step: 5
+        title: 力控与示教
+        description: 加入力传感器，实现拖动示教和柔顺控制
+    detailed_bom:
+      - item: STS3215总线舵机
+        quantity: 6
+        price: 150
+        specs: 30kg·cm@12V, 360°, 位置反馈
+        source: 飞特/淘宝
+      - item: 夹爪舵机
+        quantity: 1
+        price: 30
+        specs: MG996R, 夹持力5kg
+        source: 淘宝
+      - item: 树莓派5 8GB
+        quantity: 1
+        price: 650
+        specs: 上位机, 运行ROS2+MoveIt2
+        source: 树莓派官方
+      - item: 串口总线转换器
+        quantity: 1
+        price: 25
+        specs: TTL↔USB
+        source: 淘宝
+      - item: 3D打印件
+        quantity: 1
+        price: 150
+        specs: 6关节臂体+底座, PETG
+        source: 自3D打印/淘宝代打
+      - item: USB摄像头
+        quantity: 1
+        price: 50
+        specs: 720p, 视觉抓取
+        source: 淘宝
+      - item: 12V电源
+        quantity: 1
+        price: 30
+        specs: 12V 5A开关电源
+        source: 淘宝
+      - item: 力传感器DYW1(可选)
+        quantity: 1
+        price: 50
+        specs: 0-50kg, I2C, 力控用
+        source: 宇叠科技/淘宝
+      - item: 线材+螺丝
+        quantity: 1
+        price: 30
+        specs: 杜邦线+M2/M3螺丝包
+        source: 淘宝
+    implementation_path:
+      - phase: 硬件组装
+        steps:
+          - action: 3D打印结构件
+            detail: 打印6个关节连接件和底座，注意关节零位对齐
+            time: 6小时(打印)
+          - action: 组装6DOF臂
+            detail: 底座→肩1→肩2→肘→腕1→腕2→夹爪，6个总线舵机串联
+            time: 2小时
+          - action: 接线
+            detail: 总线舵机串联接USB转换器→树莓派，摄像头接USB，电源12V
+            time: 30分钟
+      - phase: 软件开发
+        steps:
+          - action: URDF建模
+            detail: 测量臂段长度，创建URDF模型，配置关节限位和DH参数
+            time: 3小时
+          - action: MoveIt2配置
+            detail: 使用MoveIt Setup Assistant配置运动规划组、OMPL规划器
+            time: 3小时
+          - action: 正逆运动学
+            detail: 验证MoveIt2的IK求解，测试关节空间和笛卡尔空间运动
+            time: 2小时
+      - phase: 算法部署
+        steps:
+          - action: ArUco视觉抓取
+            detail: 摄像头检测ArUco标记，手眼标定，MoveIt2规划抓取轨迹
+            time: 4小时
+          - action: 力控示教(可选)
+            detail: 接入力传感器，实现拖动示教和柔顺控制
+            time: 4小时
+    tech_framework:
+      perception:
+        sensors: [USB摄像头, 总线舵机编码器(6个), 力传感器DYW1(可选)]
+        algorithms: [ArUco标记检测, 手眼标定, 力控(可选)]
+        data_flow: "摄像头→ArUco检测→目标位姿→MoveIt2规划→6路舵机控制 | 编码器→位置反馈"
+      control:
+        method: 总线舵机位置控制
+        algorithm: MoveIt2运动规划 + IK求解 + ArUco视觉伺服
+        frequency: 50Hz
+      communication:
+        protocol: UART总线(舵机) + USB(相机) + I2C(力传感器) + DDS(ROS2)
+        framework: ROS2 Humble + MoveIt2 + OpenCV
+    attachments:
+      tutorial:
+        title: "MoveIt2 官方教程"
+        description: "MoveIt2从入门到精通的官方教程，含URDF建模和运动规划"
+        format: "在线教程(官方文档)"
+        status: "可用"
+        url: "https://moveit.picknik.ai/main/doc/tutorials/tutorials.html"
+      source_code:
+        title: "MoveIt2 运动规划框架"
+        description: "ROS2机械臂运动规划框架，含URDF建模+OMPL规划+碰撞检测+轨迹优化"
+        url: "https://github.com/ros-planning/moveit2"
+        language: "Python / C++"
+        framework: "ROS2 Humble + MoveIt2 + OpenCV"
+
+  - name: 无人机
+    category: 航空机器人
+    icon: drone
+    description: 自主飞行的多旋翼/固定翼机器人，航拍/测绘/巡检/物流
+    market_size: 全球民用无人机市场超300亿美元
+    price_range: 500-50000元
+    key_brands: [大疆, 道通, 极飞, PX4社区, ArduPilot社区]
+    tech_stack:
+      navigation: [GNSS定位, 视觉定位, 光流, 气压计定高]
+      perception: [摄像头, 激光雷达(测绘), 红外热成像(巡检)]
+      control: [PID姿态控制, 位置控制, 航点飞行, 自主起降]
+      compute: [Pixhawk飞控, Jetson(视觉), ESP32(图传)]
+      software: [PX4/ArduPilot, QGroundControl, ROS2, MAVLink]
+    core_algorithms:
+      - name: 姿态控制
+        description: 4个电机PID协调控制，保持飞行器稳定悬停
+        difficulty: 3
+      - name: 航点飞行
+        description: 按预设航点自主飞行，支持测绘/巡检航线规划
+        difficulty: 3
+      - name: 视觉避障
+        description: 基于深度相机的实时障碍物检测和避让
+        difficulty: 4
+    diy_feasibility:
+      level: 中等
+      min_budget: 500
+      difficulty_reason: PX4/ArduPilot开源飞控成熟，但安全飞行需要大量练习
+    recommended_stack:
+      controller: Pixhawk 4飞控
+      sensors: [GPS模块, 光流模块, 气压计]
+      motors: [无刷电机2212 x4 + 电调]
+      framework: PX4 + QGroundControl + ROS2
+    learning_path:
+      - step: 1
+        title: 组装F450四轴
+        description: 机架+电机+电调+飞控，完成基础组装
+      - step: 2
+        title: 首次飞行
+        description: QGroundControl校准，手动模式练习悬停
+      - step: 3
+        title: 自主飞行
+        description: 设置航点，实现自主航线飞行
+      - step: 4
+        title: 加入视觉
+        description: Jetson+摄像头，实现目标检测和跟踪
+      - step: 5
+        title: 高级应用
+        description: 测绘/巡检/物流等场景化开发
+    detailed_bom:
+      - item: Pixhawk 4飞控
+        quantity: 1
+        price: 400
+        specs: STM32F765, 14路PWM, 内置IMU
+        source: 淘宝/Holybro
+      - item: F450机架套装
+        quantity: 1
+        price: 120
+        specs: 450mm对角距, 含脚架
+        source: 淘宝
+      - item: 无刷电机2212
+        quantity: 4
+        price: 200
+        specs: 920KV, 配1045桨
+        source: 淘宝
+      - item: 电调30A
+        quantity: 4
+        price: 120
+        specs: 30A, 支持DShot
+        source: 淘宝
+      - item: GPS模块
+        quantity: 1
+        price: 150
+        specs: M8N, GPS+北斗
+        source: 淘宝
+      - item: 3S锂电池
+        quantity: 2
+        price: 120
+        specs: 11.1V 3000mAh 25C
+        source: 淘宝
+      - item: 遥控器+接收机
+        quantity: 1
+        price: 300
+        specs: 6通道以上, 2.4GHz
+        source: 淘宝
+    implementation_path:
+      - phase: 硬件组装
+        steps:
+          - action: 组装F450机架
+            detail: 安装4个电机(对角线同向)，4个电调，飞控居中，GPS朝上
+            time: 2小时
+          - action: 接线
+            detail: 电调信号线接飞控MAIN1-4，GPS接GPS口，接收机接RC IN
+            time: 1小时
+      - phase: 软件配置
+        steps:
+          - action: QGroundControl校准
+            detail: 校准遥控器、加速度计、罗盘、电调，设置机型为Quad X
+            time: 1小时
+          - action: 首次飞行
+            detail: 自稳模式练习悬停，先低油门离地10cm，逐渐加高
+            time: 2小时(练习)
+      - phase: 进阶开发
+        steps:
+          - action: 自主航线
+            detail: QGC中规划航点，实现自主起飞→航点飞行→返航降落
+            time: 2小时
+          - action: ROS2集成
+            detail: 安装mavros，飞控↔ROS2通信，实现自主航线和GPS位置保持
+            time: 3小时
+    tech_framework:
+      perception:
+        sensors: [Pixhawk内置IMU, GPS M8N, 气压计]
+        algorithms: [姿态估计(EKF), GPS定位, 气压计定高]
+        data_flow: "IMU+GPS+气压计→EKF姿态估计→PID控制→4路电机"
+      control:
+        method: PID级联控制(飞控内置)
+        algorithm: PX4/ArduPilot姿态控制 + 位置控制 + 航点导航
+        frequency: 400Hz(内环) / 50Hz(外环)
+      communication:
+        protocol: MAVLink(飞控↔地面站) + 2.4GHz(遥控) + WiFi(ROS2)
+        framework: PX4 + QGroundControl + ROS2(可选)
+    attachments:
+      tutorial:
+        title: "PX4 官方开发教程"
+        description: "PX4飞控从环境搭建到固件编译到仿真飞行到实机部署的完整教程"
+        format: "在线教程(官方文档)"
+        status: "可用"
+        url: "https://docs.px4.io/main/en/"
+      source_code:
+        title: "PX4 Autopilot 飞控源代码"
+        description: "PX4开源飞控固件，含姿态控制+GPS导航+航线规划+MAVLink通信"
+        url: "https://github.com/PX4/PX4-Autopilot"
+        language: "C / C++"
+        framework: "PX4 / ArduPilot + ROS2"
+
+  - name: 宇树机器人技术方案
+    category: 前沿方案
+    icon: unitree
+    description: 宇树科技(Unitree Robotics)是全球领先的足式机器人公司，从消费级四足Go2到人形G1/H1，提供完整的技术栈和开源工具链
+    market_size: 全球四足机器人出货量领先，科研+行业应用快速增长
+    price_range: 2000-500000元
+    key_brands: [宇树科技 Unitree Robotics]
+    tech_stack:
+      hardware: [M107关节电机(23N·m峰值), GO2四足(A1级), G1人形(23DOF), H1人形(全尺寸), B2工业四足]
+      control: [MPC模型预测控制, WBC全身控制, CPG步态生成, 逆运动学/动力学]
+      sdk: [unitree_legged_sdk(Python/C++), unitree_ros2, Unitree RL Lab]
+      simulation: [Isaac Sim(NVIDIA), MuJoCo, Gazebo]
+      ai: [强化学习PPO/SAC, Sim2Real迁移, ONNX模型部署]
+    core_algorithms:
+      - name: MPC+WBC全身控制
+        description: 模型预测控制优化足端落点，全身控制协调多任务优先级，实现动态平衡和敏捷运动
+        difficulty: 5
+      - name: Unitree RL Lab强化学习
+        description: 基于Isaac Sim的大规模并行训练，PPO策略学习，ONNX导出部署到实机，Sim2Real迁移
+        difficulty: 5
+      - name: CPG步态生成
+        description: 中央模式发生器产生节律步态(trot/walk/gallop/crawl)，支持步态切换和过渡
+        difficulty: 4
+    diy_feasibility:
+      level: 高
+      min_budget: 2000
+      difficulty_reason: Go2 Edu版提供完整SDK，但MPC/WBC控制算法需要深厚理论基础
+    recommended_stack:
+      controller: Jetson Orin Nano + 自研控制板
+      sensors: [BNO085 IMU, 深度相机RealSense D435i, 足端力传感器]
+      motors: [M107关节电机x12(四足), M107关节电机x20+(人形)]
+      framework: unitree_legged_sdk + ROS2 + Isaac Sim + Unitree RL Lab
+    learning_path:
+      - step: 1
+        title: 了解宇树生态
+        description: 熟悉Go2/Go2 Edu产品线，阅读unitree_legged_sdk文档和示例
+      - step: 2
+        title: 仿真环境搭建
+        description: 安装Isaac Sim，使用Unitree RL Lab在仿真中训练步态策略
+      - step: 3
+        title: 强化学习训练
+        description: 使用PPO算法在Isaac Sim中训练四足行走策略，导出ONNX模型
+      - step: 4
+        title: Sim2Real部署
+        description: 将训练好的ONNX模型部署到Go2实机，调试Sim2Real差距
+      - step: 5
+        title: 高级控制开发
+        description: 实现MPC/WBC全身控制，开发复杂地形行走和动态运动
+    open_source:
+      - name: unitree_legged_sdk
+        url: https://github.com/unitreerobotics/unitree_legged_sdk
+        description: 官方SDK，支持Go2/A1/B2等四足机器人的低层控制接口
+      - name: unitree_ros2
+        url: https://github.com/unitreerobotics
+        description: ROS2驱动包，包含URDF模型、仿真配置和导航示例
+      - name: Unitree RL Lab
+        url: https://github.com/unitreerobotics/unitree_rl_lab
+        description: 基于Isaac Sim的强化学习训练框架，支持PPO/SAC，可导出ONNX部署
+      - name: UnifoLM-WBT-Dataset
+        url: https://github.com/unitreerobotics
+        description: 遥操作数据集，用于模仿学习和人形机器人训练
+    summary: |
+      宇树科技提供从消费级Go2(¥2000起)到科研级Go2 Edu(¥20000+)的完整产品线。
+      开发路径：使用unitree_legged_sdk进行低层控制开发，使用Unitree RL Lab在Isaac Sim中训练RL策略，
+      通过ONNX部署到实机。MPC/WBC高级控制需要深厚的控制理论基础。
+      推荐入门路线：先购买Go2 Edu版，使用官方SDK实现基本行走，再逐步学习RL训练和MPC控制。
+    resource_links:
+      - title: Unitree官方文档
+        url: https://support.unitree.com
+        type: documentation
+      - title: unitree_legged_sdk
+        url: https://github.com/unitreerobotics/unitree_legged_sdk
+        type: github
+      - title: Unitree RL Lab
+        url: https://github.com/unitreerobotics/unitree_rl_lab
+        type: github
+      - title: Isaac Sim文档
+        url: https://docs.omniverse.nvidia.com/isaacsim
+        type: documentation
+    attachments:
+      tutorial:
+        title: "宇树Go2开发教程合集"
+        description: "unitree_legged_sdk使用+Unitree RL Lab训练+Sim2Real部署的完整教程"
+        format: "在线文档"
+        status: "社区维护"
+        url: "https://support.unitree.com"
+      source_code:
+        title: "宇树机器人开源代码"
+        description: "unitree_legged_sdk + unitree_ros2 + Unitree RL Lab"
+        url: "https://github.com/unitreerobotics"
+        language: "Python / C++"
+        framework: "unitree_legged_sdk + ROS2 + Isaac Sim"
+
+  - name: 智元机器人技术方案
+    category: 前沿方案
+    icon: agibot
+    description: 智元机器人(AgiBot)是国内领先的具身智能公司，开源了GO-1通用具身基座模型、AgiBot World百万真机数据集、Genie Sim仿真平台等核心资源
+    market_size: 具身智能领域领先，开源生态丰富，科研+产业双轮驱动
+    price_range: 面向科研和产业，价格待定
+    key_brands: [智元机器人 AgiBot]
+    tech_stack:
+      model: [GO-1通用具身基座模型, ViLLA架构(VLM+Latent Planner+Action Expert), ACoT-VLA(CVPR 2026)]
+      data: [AgiBot World百万真机数据集, 多场景多任务遥操作数据]
+      simulation: [Genie Sim 3.0开源仿真平台, AgiBot Digital World仿真框架]
+      hardware: [灵犀X1人形机器人, 远征A2双臂操作机器人, 模块化关节模组]
+      deployment: [ONNX/TensorRT推理, 端侧部署优化, 多传感器融合]
+    core_algorithms:
+      - name: GO-1 ViLLA架构
+        description: 视觉语言模型(VLM)+潜空间规划器(Latent Planner)+动作专家(Action Expert)三层架构，实现语言指令到动作的端到端控制
+        difficulty: 5
+      - name: ACoT-VLA动作思维链
+        description: CVPR 2026论文，在VLA模型中引入动作思维链(Action Chain of Thought)，显著提升长程任务成功率
+        difficulty: 5
+      - name: AgiBot World数据工程
+        description: 百万级真机遥操作数据集，覆盖多场景多任务，支持模仿学习和策略泛化
+        difficulty: 4
+    diy_feasibility:
+      level: 很高
+      min_budget: 5000
+      difficulty_reason: 开源资源丰富但需要GPU算力训练，端到端模型部署需要Jetson Orin以上平台
+    recommended_stack:
+      controller: Jetson Orin NX/AGX + 机器人主控
+      sensors: [多目摄像头, 力/力矩传感器, 深度相机, IMU]
+      motors: [模块化关节模组, 谐波减速器+无刷电机]
+      framework: GO-1模型 + Genie Sim 3.0 + AgiBot World数据集 + ROS2
+    learning_path:
+      - step: 1
+        title: 了解具身智能
+        description: 学习GO-1 ViLLA架构论文，理解VLM+Planner+Action Expert的分层设计
+      - step: 2
+        title: 仿真环境搭建
+        description: 安装Genie Sim 3.0，熟悉仿真场景和任务配置
+      - step: 3
+        title: 数据集使用
+        description: 下载AgiBot World数据集，学习数据格式和模仿学习训练流程
+      - step: 4
+        title: 模型训练与微调
+        description: 基于GO-1模型在自己的数据上微调，或使用ACoT-VLA训练策略
+      - step: 5
+        title: Sim2Real部署
+        description: 将训练好的策略通过ONNX/TensorRT部署到机器人端侧
+    open_source:
+      - name: GO-1 ViLLA
+        url: https://github.com/AgiBot-Innovation
+        description: 通用具身基座模型，ViLLA架构，支持语言指令驱动的机器人操作
+      - name: AgiBot World
+        url: https://github.com/AgiBot-Innovation
+        description: 百万级真机遥操作数据集，覆盖100+场景，支持模仿学习研究
+      - name: Genie Sim 3.0
+        url: https://github.com/AgiBot-Innovation
+        description: 开源仿真平台，LLM驱动场景生成，支持大规模策略训练
+      - name: ACoT-VLA
+        url: https://github.com/AgiBot-Innovation
+        description: CVPR 2026论文，动作思维链VLA模型，提升长程任务成功率
+      - name: AgiBot Digital World
+        url: https://github.com/AgiBot-Innovation
+        description: 数字孪生仿真框架，支持高效Sim2Real迁移
+    summary: |
+      智元机器人开源了从数据(AgiBot World)到仿真(Genie Sim 3.0)到模型(GO-1 ViLLA/ACoT-VLA)的完整具身智能工具链。
+      开发路径：1)安装Genie Sim 3.0搭建仿真环境 2)下载AgiBot World数据集学习模仿学习流程
+      3)基于GO-1模型微调自己的策略 4)通过ONNX/TensorRT部署到端侧。
+      需要GPU算力(RTX 3090/4090)进行模型训练，Jetson Orin NX/AGX进行端侧部署。
+    resource_links:
+      - title: AgiBot Innovation GitHub
+        url: https://github.com/AgiBot-Innovation
+        type: github
+      - title: GO-1 ViLLA论文
+        url: https://agibot-innovation.github.io
+        type: paper
+      - title: AgiBot World数据集
+        url: https://agibot-innovation.github.io
+        type: dataset
+      - title: Genie Sim 3.0
+        url: https://agibot-innovation.github.io
+        type: simulation
+      - title: ACoT-VLA (CVPR 2026)
+        url: https://agibot-innovation.github.io
+        type: paper
+    attachments:
+      tutorial:
+        title: "智元具身智能开发教程"
+        description: "GO-1 ViLLA模型使用+AgiBot World数据集+Genie Sim仿真的完整教程"
+        format: "在线文档"
+        status: "社区维护"
+        url: "https://github.com/AgiBot-Innovation"
+      source_code:
+        title: "智元机器人开源代码"
+        description: "GO-1 ViLLA + AgiBot World + Genie Sim 3.0 + ACoT-VLA"
+        url: "https://github.com/AgiBot-Innovation"
+        language: "Python"
+        framework: "PyTorch + ROS2 + Isaac Sim"

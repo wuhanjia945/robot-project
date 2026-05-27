@@ -1,0 +1,212 @@
+intro:
+  title: 什么是机器人
+  content: 机器人是一种能够自动执行任务的机械装置，通常具备感知环境、做出决策和执行动作的能力。现代机器人由机械结构、电子硬件和软件算法三大部分组成。
+
+history:
+  - year: 1920
+    event: "捷克作家Karel Capek首次提出'Robot'一词"
+  - year: 1961
+    event: "Unimate——世界上第一台工业机器人在通用汽车上岗"
+  - year: 1969
+    event: "斯坦福研究所开发Shakey——首台能推理的移动机器人"
+  - year: 1997
+    event: "IBM深蓝击败国际象棋世界冠军卡斯帕罗夫"
+  - year: 2002
+    event: "iRobot Roomba扫地机器人发布，消费级机器人时代开启"
+  - year: 2013
+    event: "Boston Dynamics Atlas亮相，人形机器人突破"
+  - year: 2015
+    event: "ROS 2发布，机器人操作系统进入新纪元"
+  - year: 2020
+    event: "四足机器人商业化元年，宇树/小米相继发布消费级产品"
+  - year: 2023
+    event: "大模型+机器人成为新范式，具身智能概念爆发"
+  - year: 2025
+    event: "人形机器人进入工厂/家庭试点，通用机器人时代来临"
+
+core_concepts:
+  - name: 感知
+    icon: eye
+    description: 机器人通过传感器感知周围世界，就像人的五官
+    details:
+      - 传感器是机器人的"眼睛"和"耳朵"，常见的有摄像头(视觉)、激光雷达(距离)、IMU(姿态)、编码器(位置)、力传感器(触觉)
+      - 传感器数据经过处理算法(如SLAM、目标检测)转化为机器人可理解的信息
+  - name: 决策
+    icon: brain
+    description: 机器人根据感知信息做出行动决策，就像人的大脑
+    details:
+      - 决策层决定机器人"做什么"和"怎么做"
+      - 路径规划(A*/DWA)决定怎么走，任务规划决定做什么，强化学习让机器人从经验中学习
+  - name: 执行
+    icon: hand
+    description: 机器人通过执行器完成物理动作，就像人的四肢
+    details:
+      - 执行器是机器人的"肌肉"，常见的有电机(旋转运动)、舵机(角度控制)、气缸/液压(直线运动)
+      - 控制算法(PID/MPC)确保执行器精准、稳定地完成指令
+  - name: 通信
+    icon: link
+    description: 各模块之间需要通信协作，就像人的神经系统
+    details:
+      - ROS2是最主流的机器人通信框架，让感知/决策/控制模块高效协作
+      - 通信方式包括串口(近距离)、WiFi(无线)、CAN总线(工业级)
+
+robot_types:
+  - type: 轮式机器人 Wheeled Robot
+    description: 最常见的移动机器人形态，结构简单成本低
+    examples: [扫地机器人, 送餐机器人, AGV, 平衡车]
+    difficulty: 入门首选
+    min_budget: 100
+  - type: 足式机器人 Legged Robot
+    description: 模仿动物行走，适应复杂地形但控制难度高
+    examples: [四足机器人(狗), 人形机器人, 六足机器人]
+    difficulty: 进阶挑战
+    min_budget: 1500
+  - type: 机械臂 Robotic Arm
+    description: 固定基座的操作机器人，专注于抓取和操作
+    examples: [工业机械臂, 协作臂, 桌面机械臂]
+    difficulty: 中等
+    min_budget: 500
+  - type: 复合机器人 Composite Robot
+    description: 移动底盘+机械臂，既能移动又能操作
+    examples: [移动抓取机器人, 仓储拣选机器人]
+    difficulty: 中高
+    min_budget: 3000
+  - type: 无人机 Drone/UAV
+    description: 空中自主飞行的机器人
+    examples: [航拍无人机, 测绘无人机, 巡检无人机]
+    difficulty: 中等
+    min_budget: 500
+
+tech_frameworks:
+  - name: ROS2
+    full_name: Robot Operating System 2
+    description: 机器人领域的"操作系统"，提供通信、工具和生态
+    why_important: 几乎所有现代机器人项目都基于ROS2，学会它就掌握了机器人开发的核心框架
+    learning_priority: 必学
+  - name: MoveIt2
+    full_name: Motion Planning Framework
+    description: 机械臂运动规划框架，解决"怎么动"的问题
+    why_important: 做机械臂必用，集成OMPL等规划器，开箱即用
+    learning_priority: 机械臂方向必学
+  - name: Nav2
+    full_name: Navigation2
+    description: 自主导航框架，解决"怎么走"的问题
+    why_important: 做移动机器人必用，建图+规划+避障一体化
+    learning_priority: 移动机器人方向必学
+  - name: OpenCV
+    full_name: Open Source Computer Vision
+    description: 计算机视觉基础库，图像处理和视觉算法
+    why_important: 机器人视觉的基石，从标定到检测都离不开它
+    learning_priority: 视觉方向必学
+  - name: Gazebo
+    full_name: Robot Simulation
+    description: 机器人物理仿真器，在虚拟世界中验证算法
+    why_important: 没有实物也能开发，先仿真后实机，大幅降低试错成本
+    learning_priority: 强烈推荐
+  - name: PX4/ArduPilot
+    full_name: Open Source Flight Control
+    description: 开源飞控系统，无人机开发的标准选择
+    why_important: 做无人机必用，成熟的飞控和地面站生态
+    learning_priority: 无人机方向必学
+
+frontier_tech:
+  - name: 具身智能 Embodied AI
+    level: 前沿
+    description: 让AI拥有物理身体，在真实世界中感知、决策和行动。大模型+机器人是当前最热门的研究方向
+    key_concepts:
+      - VLA模型(Vision-Language-Action)：视觉语言动作模型，从图像和语言指令直接输出机器人动作
+      - 端到端学习：从感知到动作的端到端神经网络，替代传统模块化流水线
+      - 模仿学习：从人类演示数据中学习策略，如ACT、Diffusion Policy
+      - Sim2Real迁移：在仿真中训练策略，迁移到真实机器人
+    representative_works:
+      - RT-2(Google DeepMind)：视觉语言模型直接输出机器人动作
+      - GO-1 ViLLA(智元)：VLM+潜空间规划器+动作专家三层架构
+      - ACoT-VLA(智元, CVPR 2026)：动作思维链提升长程任务成功率
+      - Octopus(面壁智能)：端侧具身智能模型
+    learning_path:
+      - 学习深度学习基础(PyTorch)
+      - 学习强化学习基础(PPO/SAC)
+      - 学习模仿学习(ACT/Diffusion Policy)
+      - 阅读VLA论文(RT-2/Octo/GO-1)
+      - 使用开源数据集(AgiBot World/Open X-Embodiment)训练策略
+
+  - name: 强化学习运动策略 RL Locomotion
+    level: 前沿
+    description: 使用深度强化学习训练机器人的运动策略，实现敏捷、鲁棒的动态运动
+    key_concepts:
+      - PPO(Proximal Policy Optimization)：最常用的RL算法，稳定且高效
+      - SAC(Soft Actor-Critic)：基于最大熵的RL算法，探索性强
+      - 域随机化 Domain Randomization：在仿真中随机化物理参数，提升Sim2Real鲁棒性
+      - 奖励工程 Reward Shaping：设计合理的奖励函数引导策略学习
+    representative_works:
+      - Unitree RL Lab：宇树开源的Isaac Sim RL训练框架
+      - Isaac Lab(NVIDIA)：大规模并行RL训练平台
+      - Walk These Ways(Stanford)：四足敏捷运动策略
+      - RSL(ETH Zurich)：ANYmal腿式机器人RL运动控制
+    learning_path:
+      - 学习RL基础(Sutton & Barto教材)
+      - 安装Isaac Sim/Isaac Lab
+      - 使用Unitree RL Lab训练四足行走
+      - 实现域随机化提升Sim2Real
+      - 部署ONNX模型到实机
+
+  - name: 大模型+机器人 LLM+Robotics
+    level: 前沿
+    description: 利用大语言模型的推理和规划能力，让机器人理解自然语言指令并完成复杂任务
+    key_concepts:
+      - 任务规划 Task Planning：LLM将自然语言指令分解为可执行的子任务序列
+      - 代码生成 Code Generation：LLM生成机器人控制代码(Python/ROS2)
+      - 场景理解 Scene Understanding：VLM理解场景语义，辅助决策
+      - 交互式学习 Interactive Learning：通过对话纠正和改进机器人行为
+    representative_works:
+      - SayCan(Google)：LLM+affordance实现可执行的机器人规划
+      - Code as Policies(Google)：LLM生成机器人控制代码
+      - ProgPrompt：基于程序化提示的机器人任务规划
+      - Inner Monologue：机器人内心独白式推理
+    learning_path:
+      - 学习LLM基础(Transformer/Attention)
+      - 学习Prompt Engineering
+      - 使用LangChain/LlamaIndex构建Agent
+      - 集成LLM到ROS2系统
+      - 实现自然语言驱动的机器人控制
+
+  - name: Sim2Real仿真到实机
+    level: 进阶
+    description: 在仿真环境中训练算法，然后迁移到真实机器人，大幅降低试错成本
+    key_concepts:
+      - 物理仿真器：MuJoCo(精确)、Isaac Sim(快速并行)、Gazebo(ROS生态)、PyBullet(易用)
+      - 域随机化：随机化摩擦力/质量/延迟等参数，提升策略鲁棒性
+      - 系统辨识：从实机数据反推仿真参数，缩小Sim2Real Gap
+      - 渐进迁移：逐步从仿真过渡到实机，降低迁移难度
+    representative_works:
+      - Isaac Sim/Omniverse(NVIDIA)：GPU加速的大规模并行仿真
+      - Genie Sim 3.0(智元)：LLM驱动的场景生成仿真
+      - MuJoCo MPC：基于MuJoCo的实时模型预测控制
+      - Sim2Real2Sim：双向迁移缩小仿真-现实差距
+    learning_path:
+      - 学习MuJoCo/PyBullet基础仿真
+      - 学习Isaac Sim并行仿真
+      - 实现域随机化训练
+      - 系统辨识缩小Sim2Real Gap
+      - 渐进式迁移到实机验证
+
+  - name: 视觉-语言-动作模型 VLA
+    level: 前沿
+    description: 将视觉理解、语言推理和动作执行统一到一个模型中，实现端到端的机器人控制
+    key_concepts:
+      - 视觉编码器 Vision Encoder：提取图像特征(ViT/ResNet)
+      - 语言模型 Language Model：理解指令和推理(LLM/VLM)
+      - 动作解码器 Action Decoder：输出机器人动作(扩散模型/Flow Matching)
+      - 数据驱动 Data-Driven：需要大规模遥操作数据训练
+    representative_works:
+      - RT-2(Google)：首个VLA模型，PaLM-E+机器人控制
+      - Octo(Berkeley)：开源通用机器人策略
+      - GO-1 ViLLA(智元)：VLM+潜空间规划器+动作专家
+      - ACoT-VLA(智元)：动作思维链VLA，CVPR 2026
+      - Diffusion Policy(Columbia)：基于扩散模型的机器人策略
+    learning_path:
+      - 学习Vision Transformer和LLM基础
+      - 学习Diffusion Model基础
+      - 阅读RT-2/Octo论文
+      - 使用AgiBot World数据集训练
+      - 部署VLA模型到Jetson端侧

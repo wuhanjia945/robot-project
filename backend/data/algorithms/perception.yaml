@@ -1,0 +1,86 @@
+category: 感知算法
+algorithms:
+  - name: ArUco标记检测与定位
+    level: basic
+    applicable_robots: [arm, wheeled, quadruped]
+    required_sensors: [camera]
+    required_compute: [RASPBERRY_PI5, JETSON_ORIN_NANO]
+    description: ArUco标记检测与位姿估计，适合视觉定位和抓取
+    difficulty: 2
+    parameters:
+      - name: marker_size
+        type: float
+        unit: m
+        description: 标记物理尺寸
+      - name: dictionary
+        type: str
+        default: DICT_4X4_50
+        description: ArUco字典类型
+      - name: camera_matrix
+        type: list[list[float]]
+        description: 相机内参矩阵
+      - name: dist_coeffs
+        type: list[float]
+        description: 畸变系数
+    input_spec:
+      image: numpy.ndarray
+    output_spec:
+      marker_ids: list[int]
+      marker_poses: list[dict]
+    code_template: aruco_detection
+  - name: YOLO目标检测
+    level: advanced
+    applicable_robots: [arm, wheeled, quadruped, humanoid]
+    required_sensors: [camera]
+    required_compute: [JETSON_ORIN_NANO, IPC]
+    description: YOLOv8实时目标检测，识别物体类别和位置
+    difficulty: 2
+    parameters:
+      - name: model_size
+        type: str
+        default: yolov8n
+        options: [yolov8n, yolov8s, yolov8m, yolov8l, yolov8x]
+      - name: confidence_threshold
+        type: float
+        default: 0.5
+        range: [0.1, 0.99]
+      - name: iou_threshold
+        type: float
+        default: 0.45
+        range: [0.1, 0.99]
+      - name: input_size
+        type: int
+        default: 640
+    input_spec:
+      image: numpy.ndarray
+    output_spec:
+      detections: list[dict]
+      inference_time_ms: float
+    code_template: yolo_detection
+  - name: 视觉伺服PBVS
+    level: advanced
+    applicable_robots: [arm]
+    required_sensors: [camera, encoder]
+    required_compute: [RASPBERRY_PI5, JETSON_ORIN_NANO]
+    description: 基于位置的视觉伺服(Position-Based Visual Servoing)，引导机械臂到达目标位姿
+    difficulty: 3
+    parameters:
+      - name: gain
+        type: float
+        default: 0.5
+        range: [0.01, 2.0]
+      - name: max_linear_velocity
+        type: float
+        default: 0.1
+        unit: m/s
+      - name: max_angular_velocity
+        type: float
+        default: 0.5
+        unit: rad/s
+    input_spec:
+      target_pose_camera: list[float]
+      current_joint_angles: list[float]
+    output_spec:
+      joint_velocity_commands: list[float]
+      pose_error: list[float]
+    code_template: pbvs_visual_servo

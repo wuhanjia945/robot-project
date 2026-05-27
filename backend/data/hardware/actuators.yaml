@@ -1,0 +1,115 @@
+category: 执行器
+items:
+  - name: MG996R舵机
+    brand: 田宫兼容
+    model: MG996R
+    specs:
+      type: servo
+      torque: 11kg·cm@6V
+      speed: 0.17s/60°@6V
+      voltage: 4.8-7.2V
+      interface: PWM
+      weight: 55g
+      rotation: 180°
+    price_min: 8
+    price_max: 20
+    currency: CNY
+    availability: available
+    compatibility_tags: [servo, pwm, beginner]
+    applicable_robots: [arm_4dof, quadruped_toy, humanoid_toy]
+    notes: 入门级舵机，适合学习和简单原型
+  - name: DS3218数字舵机
+    brand: 多品牌
+    model: DS3218
+    specs:
+      type: servo
+      torque: 20kg·cm@6.8V
+      speed: 0.14s/60°@6.8V
+      voltage: 5-7.4V
+      interface: PWM
+      weight: 60g
+      rotation: 270°
+    price_min: 25
+    price_max: 50
+    currency: CNY
+    availability: available
+    compatibility_tags: [servo, pwm, intermediate]
+    applicable_robots: [arm_6dof, quadruped_small, humanoid_small]
+    notes: 中端数字舵机，扭矩和精度较好
+  - name: 串行总线舵机STS3215
+    brand: 飞特/Feast
+    model: STS3215
+    specs:
+      type: bus_servo
+      torque: 30kg·cm@12V
+      speed: 0.12s/60°@12V
+      voltage: 9-12.6V
+      interface: UART串行总线
+      weight: 55g
+      rotation: 360°连续
+      feedback: position/temperature/voltage
+    price_min: 120
+    price_max: 200
+    currency: CNY
+    availability: available
+    compatibility_tags: [bus_servo, uart, feedback, intermediate]
+    applicable_robots: [arm_6dof, quadruped, humanoid_basic]
+    notes: 总线舵机，支持位置反馈，适合闭环控制
+  - name: 42步进电机+TMC2209驱动
+    brand: 多品牌
+    model: 42STH34-1335A + TMC2209
+    specs:
+      type: stepper
+      step_angle: 1.8°
+      holding_torque: 0.44N·m
+      current: 1.33A
+      voltage: 12-24V
+      interface: SPI/UART步进脉冲
+      driver: TMC2209(静音/微步)
+      weight: 280g
+    price_min: 45
+    price_max: 90
+    currency: CNY
+    availability: available
+    compatibility_tags: [stepper, tmc, cnc, arm]
+    applicable_robots: [arm_3d_print, cnc, cartesian_robot]
+    notes: 步进电机+静音驱动，适合3D打印/CNC/直角坐标机器人
+  - name: ODrive D6374无刷电机套件
+    brand: ODrive
+    model: D6374 150KV + ODrive S1
+    specs:
+      type: brushless
+      kv: 150KV
+      max_rpm: 4500
+      torque: 0.73N·m持续/2.2N·m峰值
+      voltage: 24-48V
+      interface: USB/CAN/UART
+      encoder: AMT102 8192CPR
+      weight: 350g(motor)
+    price_min: 600
+    price_max: 1000
+    currency: CNY
+    availability: available
+    compatibility_tags: [bldc, odrive, servo_mode, advanced]
+    applicable_robots: [quadruped, humanoid, arm_advanced, bldc_balancer]
+    notes: 高性能无刷伺服，适合足式/人形机器人关节
+  - name: 谐波减速器伺服电机组件
+    brand: 来福谐波/大族/绿的
+    model: LHD-20-50-I-S + 伺服电机
+    specs:
+      type: harmonic_servo
+      reduction_ratio: 50:1
+      rated_torque: 7N·m
+      peak_torque: 21N·m
+      backlash: <1arc-min
+      voltage: 24-48V
+      interface: CAN/EtherCAT
+      encoder: 绝对值编码器17bit+
+      weight: 800g
+    price_min: 2500
+    price_max: 5000
+    currency: CNY
+    availability: limited
+    compatibility_tags: [harmonic, servo, industrial, high_precision]
+    applicable_robots: [industrial_arm, humanoid_advanced, surgical_robot]
+    notes: 工业级谐波减速器+伺服，高精度高扭矩

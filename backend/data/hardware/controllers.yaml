@@ -1,0 +1,99 @@
+category: 主控制器
+items:
+  - name: STM32F103C8T6最小系统板
+    brand: 正点原子/野火
+    model: STM32F103C8T6
+    specs:
+      cpu: ARM Cortex-M3 72MHz
+      flash: 64KB
+      ram: 20KB
+      interfaces: [UART, SPI, I2C, CAN, USB, PWM]
+      dimensions: 53mm x 23mm
+    price_min: 15
+    price_max: 35
+    currency: CNY
+    availability: available
+    compatibility_tags: [stm32, embedded, basic_control]
+    applicable_robots: [wheeled_basic, simple_arm]
+    notes: 入门级主控，适合简单运动控制
+  - name: STM32F407VET6开发板
+    brand: 正点原子/野火
+    model: STM32F407VET6
+    specs:
+      cpu: ARM Cortex-M4 168MHz FPU
+      flash: 512KB
+      ram: 192KB
+      interfaces: [UART, SPI, I2C, CAN, USB, ETH, PWM, ADC, DAC]
+      dimensions: 85mm x 55mm
+    price_min: 50
+    price_max: 120
+    currency: CNY
+    availability: available
+    compatibility_tags: [stm32, embedded, advanced_control]
+    applicable_robots: [wheeled, arm_4dof, quadruped_basic]
+    notes: 中端主控，支持浮点运算，适合复杂运动控制
+  - name: ESP32-S3开发板
+    brand: 乐鑫/ESP32
+    model: ESP32-S3-WROOM-1
+    specs:
+      cpu: Xtensa LX7 240MHz 双核
+      flash: 16MB
+      ram: 8MB PSRAM
+      interfaces: [UART, SPI, I2C, WiFi, BLE, PWM, ADC]
+      dimensions: 55mm x 28mm
+    price_min: 25
+    price_max: 60
+    currency: CNY
+    availability: available
+    compatibility_tags: [esp32, wireless, iot]
+    applicable_robots: [wheeled, arm_simple, iot_robot]
+    notes: 自带WiFi/BLE，适合需要无线通信的机器人
+  - name: 树莓派5 8GB
+    brand: Raspberry Pi
+    model: Raspberry Pi 5 8GB
+    specs:
+      cpu: BCM2712 4核 Cortex-A76 2.4GHz
+      ram: 8GB LPDDR4X
+      interfaces: [UART, SPI, I2C, USB3, HDMI, PCIe, WiFi, BLE, ETH, CSI, DSI]
+      storage: MicroSD
+      dimensions: 85mm x 56mm
+    price_min: 580
+    price_max: 750
+    currency: CNY
+    availability: available
+    compatibility_tags: [linux, sbc, vision, ros2]
+    applicable_robots: [wheeled_advanced, arm_6dof, quadruped, humanoid_basic]
+    notes: 可运行Linux和ROS2，适合需要视觉处理的机器人
+  - name: NVIDIA Jetson Orin Nano 8GB
+    brand: NVIDIA
+    model: Jetson Orin Nano 8GB
+    specs:
+      cpu: 6核 ARM Cortex-A78AE
+      gpu: 1024-core Ampere GPU 40 TOPS
+      ram: 8GB LPDDR5
+      interfaces: [UART, SPI, I2C, USB3, HDMI, PCIe, WiFi, ETH, CSI]
+      storage: NVMe SSD
+      dimensions: 100mm x 80mm
+    price_min: 1500
+    price_max: 2000
+    currency: CNY
+    availability: available
+    compatibility_tags: [linux, gpu, ai, ros2, jetson]
+    applicable_robots: [arm_6dof, quadruped, humanoid, drone_advanced, amr]
+    notes: 边缘AI计算平台，支持视觉/AI推理，ROS2原生支持
+  - name: 工控机 i7-12700 + RTX4060
+    brand: 研华/研祥/自组
+    model: IPC-i7-4060
+    specs:
+      cpu: Intel i7-12700 12核20线程
+      gpu: RTX 4060 8GB
+      ram: 32GB DDR5
+      interfaces: [USB3, ETH, HDMI, DP, PCIe, COM, GPIO]
+      storage: 512GB NVMe SSD
+    price_min: 8000
+    price_max: 15000
+    currency: CNY
+    availability: available
+    compatibility_tags: [linux, gpu, industrial, ros2, high_performance]
+    applicable_robots: [humanoid, industrial_arm, amr, multi_robot]
+    notes: 工业级算力，适合复杂AI任务和多机器人协同

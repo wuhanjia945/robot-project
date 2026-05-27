@@ -1,0 +1,42 @@
+category: 语音与大模型
+items:
+  - name: Whisper
+    version: "large-v3"
+    purpose: 语音识别
+    language: Python
+    license: MIT
+    compatibility: [Linux, Windows, macOS]
+    tags: [asr, speech, whisper]
+    description: OpenAI开源语音识别模型，支持多语言
+    url: https://github.com/openai/whisper
+    difficulty: 2
+  - name: ChatTTS
+    version: "1.0+"
+    purpose: 中文语音合成
+    language: Python
+    license: AGPL-3.0
+    compatibility: [Linux, Windows]
+    tags: [tts, speech, chinese]
+    description: 开源中文语音合成，自然度高
+    url: https://github.com/2noise/ChatTTS
+    difficulty: 2
+  - name: LangChain
+    version: "0.1+"
+    purpose: LLM应用开发框架
+    language: Python
+    license: MIT
+    compatibility: [Linux, Windows, macOS]
+    tags: [llm, agent, rag]
+    description: LLM应用开发框架，支持RAG/Agent/Chain
+    url: https://langchain.com
+    difficulty: 3
+  - name: Ollama
+    version: "0.1+"
+    purpose: 本地LLM部署
+    language: Go/Python
+    license: MIT
+    compatibility: [Linux, Windows, macOS]
+    tags: [llm, local, deployment]
+    description: 本地大语言模型部署工具，一键运行LLaMA/Qwen等模型
+    url: https://ollama.com
+    difficulty: 1

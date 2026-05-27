@@ -1,0 +1,52 @@
+category: 视觉感知
+items:
+  - name: OpenCV
+    version: "4.8+"
+    purpose: 计算机视觉基础库
+    language: C++/Python
+    license: Apache-2.0
+    compatibility: [Linux, Windows, macOS, ARM]
+    tags: [vision, image_processing, calibration]
+    description: 最广泛使用的计算机视觉库，涵盖图像处理/特征提取/标定等
+    url: https://opencv.org
+    difficulty: 2
+  - name: YOLOv8
+    version: "8.1+"
+    purpose: 实时目标检测
+    language: Python
+    license: AGPL-3.0
+    compatibility: [Linux, Windows, NVIDIA GPU]
+    tags: [detection, yolo, real_time]
+    description: Ultralytics最新YOLO版本，支持检测/分割/姿态估计/分类
+    url: https://github.com/ultralytics/ultralytics
+    difficulty: 2
+  - name: Depth Anything V2
+    version: "2.0"
+    purpose: 单目深度估计
+    language: Python
+    license: Apache-2.0
+    compatibility: [Linux, NVIDIA GPU]
+    tags: [depth_estimation, monocular, 3d]
+    description: Meta单目深度估计模型，无需深度相机即可获取深度信息
+    url: https://github.com/DepthAnything/Depth-Anything-V2
+    difficulty: 3
+  - name: MediaPipe
+    version: "0.10+"
+    purpose: 手部/人体姿态估计
+    language: C++/Python
+    license: Apache-2.0
+    compatibility: [Linux, Windows, macOS, Android, iOS]
+    tags: [pose_estimation, hand_tracking, human]
+    description: Google开源的实时手部/人体/面部关键点检测
+    url: https://mediapipe.dev
+    difficulty: 2
+  - name: Open3D
+    version: "0.18+"
+    purpose: 3D点云处理
+    language: C++/Python
+    license: MIT
+    compatibility: [Linux, Windows, macOS]
+    tags: [point_cloud, 3d, reconstruction]
+    description: 3D数据处理库，支持点云处理/3D重建/可视化
+    url: https://open3d.org
+    difficulty: 3

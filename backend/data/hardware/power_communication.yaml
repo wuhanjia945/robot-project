@@ -1,0 +1,62 @@
+category: 电源与通信
+items:
+  - name: 18650锂电池组3S1P
+    brand: 多品牌
+    model: 3S1P-12V-3000mAh
+    specs:
+      type: battery
+      voltage: 11.1V(3S)
+      capacity: 3000mAh
+      discharge_rate: 20C
+      weight: 150g
+      protection: BMS保护板
+    price_min: 50
+    price_max: 100
+    currency: CNY
+    availability: available
+    compatibility_tags: [battery, 3s, robot_power]
+    notes: 常用机器人电源，3S电压适合大多数舵机和电机
+  - name: LM2596降压模块
+    brand: 多品牌
+    model: LM2596S-5.0
+    specs:
+      type: voltage_regulator
+      input: 4.5-40V
+      output: 5V
+      current: 3A
+      efficiency: 92%
+    price_min: 3
+    price_max: 8
+    currency: CNY
+    availability: available
+    compatibility_tags: [power, 5v, step_down]
+    notes: 5V降压模块，为主控和传感器供电
+  - name: HC-05蓝牙模块
+    brand: 多品牌
+    model: HC-05
+    specs:
+      type: bluetooth
+      version: Bluetooth 3.0
+      range: 10m
+      interface: UART
+      baud_rate: 9600-1382400
+    price_min: 10
+    price_max: 25
+    currency: CNY
+    availability: available
+    compatibility_tags: [bluetooth, uart, wireless]
+    notes: 经典蓝牙模块，适合手机遥控机器人
+  - name: ESP8266 WiFi模块
+    brand: 乐鑫
+    model: ESP-01S
+    specs:
+      type: wifi
+      protocol: 802.11 b/g/n
+      interface: UART
+      range: 50m+
+    price_min: 5
+    price_max: 12
+    currency: CNY
+    availability: available
+    compatibility_tags: [wifi, uart, iot]
+    notes: 低成本WiFi模块，适合IoT机器人

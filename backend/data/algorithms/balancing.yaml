@@ -1,0 +1,101 @@
+category: 平衡与稳定
+algorithms:
+  - name: 倒立摆平衡控制
+    level: basic
+    applicable_robots: [wheeled]
+    required_sensors: [imu, encoder]
+    required_compute: [STM32F4, ESP32]
+    description: 两轮自平衡机器人LQR/PID平衡控制
+    difficulty: 2
+    parameters:
+      - name: kp_angle
+        type: float
+        default: 30.0
+      - name: kd_angle
+        type: float
+        default: 0.5
+      - name: kp_position
+        type: float
+        default: 20.0
+      - name: kd_position
+        type: float
+        default: 0.3
+      - name: max_angle
+        type: float
+        default: 15.0
+        unit: deg
+    input_spec:
+      pitch_angle: float
+      pitch_rate: float
+      position: float
+      velocity: float
+    output_spec:
+      motor_speed: float
+    code_template: balancer_control
+  - name: ZMP平衡控制
+    level: advanced
+    applicable_robots: [humanoid, quadruped]
+    required_sensors: [imu, force_sensor]
+    required_compute: [JETSON_ORIN_NANO, IPC]
+    description: 零矩点(ZMP)平衡控制，确保双足/四足行走稳定性
+    difficulty: 4
+    parameters:
+      - name: zmp_offset_x
+        type: float
+        default: 0.0
+        unit: m
+      - name: zmp_offset_y
+        type: float
+        default: 0.0
+        unit: m
+      - name: stability_margin
+        type: float
+        default: 0.02
+        unit: m
+      - name: com_height
+        type: float
+        default: 0.5
+        unit: m
+    input_spec:
+      com_position: list[float]
+      com_velocity: list[float]
+      support_polygon: list[list[float]]
+    output_spec:
+      zmp_position: list[float]
+      is_stable: bool
+      stability_margin: float
+    code_template: zmp_balance
+  - name: VMC虚拟模型控制
+    level: advanced
+    applicable_robots: [quadruped]
+    required_sensors: [imu, encoder, force_sensor]
+    required_compute: [RASPBERRY_PI5, JETSON_ORIN_NANO]
+    description: 虚拟模型控制(Virtual Model Control)，在虚拟力空间设计控制律
+    difficulty: 4
+    parameters:
+      - name: virtual_spring_k
+        type: float
+        default: 500.0
+      - name: virtual_damping_b
+        type: float
+        default: 20.0
+      - name: desired_height
+        type: float
+        default: 0.25
+        unit: m
+      - name: desired_pitch
+        type: float
+        default: 0.0
+        unit: rad
+      - name: desired_roll
+        type: float
+        default: 0.0
+        unit: rad
+    input_spec:
+      actual_height: float
+      actual_pitch: float
+      actual_roll: float
+      imu_data: list[float]
+    output_spec:
+      joint_torques: list[float]
+    code_template: vmc_control

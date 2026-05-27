@@ -1,0 +1,32 @@
+category: 仿真环境
+items:
+  - name: Gazebo
+    version: "Harmonic"
+    purpose: 机器人物理仿真
+    language: C++
+    license: Apache-2.0
+    compatibility: [Linux, ROS2]
+    tags: [simulation, physics, ros2]
+    description: ROS2官方推荐仿真器，支持多种物理引擎
+    url: https://gazebosim.org
+    difficulty: 3
+  - name: NVIDIA Isaac Sim
+    version: "4.0+"
+    purpose: 高保真物理仿真与合成数据
+    language: Python
+    license: NVIDIA License
+    compatibility: [Linux, NVIDIA GPU]
+    tags: [simulation, physics, synthetic_data, gpu]
+    description: 基于Omniverse的高保真仿真，支持RL训练和合成数据生成
+    url: https://developer.nvidia.com/isaac-sim
+    difficulty: 4
+  - name: MuJoCo
+    version: "3.0+"
+    purpose: 接触动力学仿真
+    language: C/Python
+    license: Apache-2.0
+    compatibility: [Linux, Windows, macOS]
+    tags: [simulation, physics, contact, rl]
+    description: DeepMind开源物理引擎，适合足式/人形机器人RL训练
+    url: https://mujoco.org
+    difficulty: 3

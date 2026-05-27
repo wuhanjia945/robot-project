@@ -1,0 +1,42 @@
+category: SLAM与导航
+items:
+  - name: Nav2
+    version: "1.2+"
+    purpose: 自主导航框架
+    language: C++/Python
+    license: Apache-2.0
+    compatibility: [Linux, ROS2]
+    tags: [navigation, path_planning, ros2]
+    description: ROS2官方导航栈，支持2D/3D导航、路径规划、避障
+    url: https://navigation.ros.org
+    difficulty: 3
+  - name: Cartographer
+    version: "2.0+"
+    purpose: 2D/3D SLAM
+    language: C++
+    license: Apache-2.0
+    compatibility: [Linux, ROS2]
+    tags: [slam, mapping, lidar]
+    description: Google开源SLAM方案，支持2D/3D建图
+    url: https://github.com/cartographer-project
+    difficulty: 3
+  - name: FAST-LIO2
+    version: "2.0+"
+    purpose: 激光雷达惯性SLAM
+    language: C++
+    license: GPL-2.0
+    compatibility: [Linux, ROS2]
+    tags: [slam, lidar, imu, fast]
+    description: 高速激光雷达-惯性SLAM，适合无人机/足式机器人
+    url: https://github.com/hku-mars/FAST_LIO
+    difficulty: 4
+  - name: ORB-SLAM3
+    version: "3.0"
+    purpose: 视觉惯性SLAM
+    language: C++
+    license: GPL-3.0
+    compatibility: [Linux]
+    tags: [slam, visual, imu, vslam]
+    description: 支持单目/双目/RGB-D+IMU的视觉SLAM
+    url: https://github.com/UZ-SLAMLab/ORB_SLAM3
+    difficulty: 4

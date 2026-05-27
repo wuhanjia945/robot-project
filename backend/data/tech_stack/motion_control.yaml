@@ -1,0 +1,52 @@
+category: 运动控制
+items:
+  - name: ROS2 Control
+    version: "3.15+"
+    purpose: 工业级运动控制框架，支持多种硬件接口
+    language: C++/Python
+    license: Apache-2.0
+    compatibility: [Linux, ROS2]
+    tags: [motion_control, ros2, industrial]
+    description: ROS2官方运动控制框架，提供hardware_interface、controller_manager等核心组件
+    url: https://control.ros.org
+    difficulty: 3
+  - name: MoveIt2
+    version: "2.8+"
+    purpose: 机械臂运动规划与避障
+    language: C++/Python
+    license: BSD-3
+    compatibility: [Linux, ROS2]
+    tags: [motion_planning, arm, ros2]
+    description: 最流行的机械臂运动规划框架，集成OMPL/CHOMP等规划器
+    url: https://moveit.ros.org
+    difficulty: 4
+  - name: ODrive
+    version: "0.5+"
+    purpose: 无刷电机高性能控制
+    language: C++/Python
+    license: MIT
+    compatibility: [STM32, Linux]
+    tags: [motor_control, bldc, servo]
+    description: 开源无刷电机伺服控制器，支持位置/速度/电流环控制
+    url: https://odriverobotics.com
+    difficulty: 2
+  - name: SimpleFOC
+    version: "2.2+"
+    purpose: 无刷电机FOC控制库
+    language: C++
+    license: MIT
+    compatibility: [STM32, ESP32, Arduino]
+    tags: [motor_control, foc, bldc]
+    description: 轻量级FOC控制库，适合嵌入式平台，支持多种传感器
+    url: https://simplefoc.com
+    difficulty: 2
+  - name: Pixhawk/PX4
+    version: "1.14+"
+    purpose: 飞控与无人机运动控制
+    language: C++
+    license: BSD-3
+    compatibility: [STM32, Linux]
+    tags: [drone, flight_control, uav]
+    description: 专业级开源飞控系统，支持多旋翼/固定翼/VTOL
+    url: https://px4.io
+    difficulty: 3

@@ -1,0 +1,170 @@
+category: 机器人完整方案
+items:
+  - name: 入门轮式机器人套件
+    brand: 多品牌
+    model: BASIC-WHEELED-001
+    robot_type: wheeled
+    level: beginner
+    specs:
+      chassis: 亚克力2层差速底盘
+      motors: TT马达 x2
+      controller: Arduino UNO + L298N驱动
+      sensors: 超声波HC-SR04 x1
+      power: 18650电池 x2
+    bom:
+      - item: Arduino UNO R3
+        quantity: 1
+        price: 25
+      - item: L298N电机驱动
+        quantity: 1
+        price: 10
+      - item: TT马达+轮子
+        quantity: 2
+        price: 12
+      - item: 亚克力底盘套件
+        quantity: 1
+        price: 20
+      - item: HC-SR04超声波
+        quantity: 1
+        price: 3
+      - item: 18650电池+电池盒
+        quantity: 1
+        price: 15
+      - item: 杜邦线+螺丝包
+        quantity: 1
+        price: 8
+    total_price_min: 93
+    total_price_max: 150
+    currency: CNY
+    availability: available
+    compatibility_tags: [wheeled, beginner, arduino]
+    notes: 最基础的入门方案，适合学习运动控制概念
+  - name: 中级ROS2视觉导航机器人
+    brand: 自组
+    model: INTER-NAV-002
+    robot_type: wheeled
+    level: intermediate
+    specs:
+      chassis: 铝合金麦轮底盘
+      motors: 步进电机+TMC2209 x4
+      controller: 树莓派5(上位机) + STM32F4(下位机)
+      sensors: RPLIDAR A1 + IMU MPU6050 + USB摄像头
+      power: 3S锂电池 12V 5000mAh
+    bom:
+      - item: 树莓派5 8GB
+        quantity: 1
+        price: 650
+      - item: STM32F407开发板
+        quantity: 1
+        price: 80
+      - item: 麦轮底盘+步进电机套件
+        quantity: 1
+        price: 400
+      - item: TMC2209驱动
+        quantity: 4
+        price: 60
+      - item: RPLIDAR A1
+        quantity: 1
+        price: 400
+      - item: MPU6050
+        quantity: 1
+        price: 10
+      - item: USB摄像头
+        quantity: 1
+        price: 50
+      - item: 3S锂电池+充电器
+        quantity: 1
+        price: 120
+      - item: 降压模块+线材
+        quantity: 1
+        price: 50
+    total_price_min: 1820
+    total_price_max: 2800
+    currency: CNY
+    availability: available
+    compatibility_tags: [wheeled, mecanum, ros2, navigation, vision]
+    notes: 可运行ROS2 Nav2导航+视觉检测，适合学习SLAM和自主导航
+  - name: 6DOF机械臂入门方案
+    brand: 自组
+    model: ARM-6DOF-001
+    robot_type: arm
+    level: intermediate
+    specs:
+      structure: 3D打印件+铝型材
+      actuators: 串行总线舵机STS3215 x6 + 夹爪舵机x1
+      controller: 树莓派5 + 串口总线转换器
+      sensors: USB摄像头 x1
+      power: 12V 5A开关电源
+    bom:
+      - item: STS3215总线舵机
+        quantity: 6
+        price: 150
+      - item: 夹爪舵机
+        quantity: 1
+        price: 30
+      - item: 树莓派5 8GB
+        quantity: 1
+        price: 650
+      - item: 串口总线转换器
+        quantity: 1
+        price: 25
+      - item: 3D打印件
+        quantity: 1
+        price: 150
+      - item: USB摄像头
+        quantity: 1
+        price: 50
+      - item: 12V电源
+        quantity: 1
+        price: 30
+      - item: 线材+螺丝
+        quantity: 1
+        price: 30
+    total_price_min: 1885
+    total_price_max: 3000
+    currency: CNY
+    availability: available
+    compatibility_tags: [arm, 6dof, bus_servo, vision]
+    notes: 6自由度机械臂，支持MoveIt2运动规划和视觉抓取
+  - name: 四足机器人入门方案
+    brand: 自组
+    model: QUAD-001
+    robot_type: quadruped
+    level: intermediate
+    specs:
+      structure: 3D打印件+碳纤维板
+      actuators: 串行总线舵机 x12
+      controller: 树莓派5(上位机) + STM32F4(下位机)
+      sensors: IMU BNO085 + USB摄像头
+      power: 3S锂电池 12V 3000mAh
+    bom:
+      - item: 串行总线舵机(大扭矩)
+        quantity: 12
+        price: 150
+      - item: 树莓派5 8GB
+        quantity: 1
+        price: 650
+      - item: STM32F407开发板
+        quantity: 1
+        price: 80
+      - item: BNO085 IMU
+        quantity: 1
+        price: 60
+      - item: USB摄像头
+        quantity: 1
+        price: 50
+      - item: 3D打印件+碳纤维板
+        quantity: 1
+        price: 300
+      - item: 3S锂电池+充电器
+        quantity: 1
+        price: 100
+      - item: 串口转换器+线材
+        quantity: 1
+        price: 50
+    total_price_min: 3090
+    total_price_max: 5000
+    currency: CNY
+    availability: available
+    compatibility_tags: [quadruped, bus_servo, walking, intermediate]
+    notes: 12自由度四足机器人，支持步态生成和平衡控制

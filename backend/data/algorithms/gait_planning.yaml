@@ -1,0 +1,145 @@
+category: 步态与规划
+algorithms:
+  - name: CPG步态生成器
+    level: advanced
+    applicable_robots: [quadruped, humanoid]
+    required_sensors: [imu]
+    required_compute: [STM32F4, RASPBERRY_PI5, JETSON_ORIN_NANO]
+    description: 基于中央模式发生器(CPG)的步态生成，产生节律性步态
+    difficulty: 3
+    parameters:
+      - name: frequency
+        type: float
+        default: 2.0
+        unit: Hz
+        range: [0.5, 5.0]
+        description: 步态频率
+      - name: phase_offsets
+        type: list[float]
+        description: 各腿相位偏移(trot=0,pi,pi,0; walk=0,pi,pi/2,3pi/2)
+      - name: amplitude
+        type: float
+        default: 0.05
+        range: [0.01, 0.2]
+        description: 步态幅值
+      - name: swing_height
+        type: float
+        default: 0.05
+        unit: m
+        range: [0.01, 0.15]
+        description: 摆动相抬腿高度
+    input_spec:
+      velocity_command: list[float]
+      imu_data: list[float]
+    output_spec:
+      foot_trajectories: list[list[list[float]]]
+    code_template: cpg_gait
+  - name: 纯追踪路径跟踪
+    level: basic
+    applicable_robots: [wheeled, diff_drive]
+    required_sensors: [encoder, imu]
+    required_compute: [STM32F4, ESP32, RASPBERRY_PI5]
+    description: Pure Pursuit路径跟踪算法，适合差速底盘路径跟踪
+    difficulty: 1
+    parameters:
+      - name: lookahead_distance
+        type: float
+        default: 0.3
+        unit: m
+        range: [0.1, 2.0]
+        description: 前瞻距离
+      - name: wheel_base
+        type: float
+        unit: m
+        description: 轴距
+    input_spec:
+      path: list[list[float]]
+      current_pose: list[float]
+    output_spec:
+      steering_angle: float
+      linear_velocity: float
+    code_template: pure_pursuit
+  - name: A*路径规划
+    level: basic
+    applicable_robots: [wheeled, diff_drive, mecanum]
+    required_sensors: [lidar_2d]
+    required_compute: [RASPBERRY_PI5, JETSON_ORIN_NANO]
+    description: A*栅格地图路径规划，全局路径规划基础算法
+    difficulty: 2
+    parameters:
+      - name: grid_resolution
+        type: float
+        default: 0.05
+        unit: m
+        range: [0.01, 0.5]
+      - name: heuristic_weight
+        type: float
+        default: 1.0
+        range: [0.5, 2.0]
+    input_spec:
+      start: list[int]
+      goal: list[int]
+      occupancy_grid: list[list[int]]
+    output_spec:
+      path: list[list[float]]
+      path_length: float
+    code_template: astar_planner
+  - name: 样条轨迹规划
+    level: basic
+    applicable_robots: [arm, wheeled]
+    required_sensors: [encoder]
+    required_compute: [STM32F4, RASPBERRY_PI5]
+    description: 三次样条插值轨迹规划，生成平滑关节空间轨迹
+    difficulty: 2
+    parameters:
+      - name: max_velocity
+        type: float
+        range: [0.1, 10.0]
+      - name: max_acceleration
+        type: float
+        range: [0.1, 20.0]
+      - name: control_freq
+        type: float
+        default: 100.0
+        unit: Hz
+    input_spec:
+      waypoints: list[list[float]]
+      waypoint_times: list[float]
+    output_spec:
+      trajectory: list[list[float]]
+      velocities: list[list[float]]
+      accelerations: list[list[float]]
+    code_template: spline_trajectory
+  - name: DWA局部避障
+    level: advanced
+    applicable_robots: [wheeled, diff_drive, mecanum]
+    required_sensors: [lidar_2d, depth_camera]
+    required_compute: [RASPBERRY_PI5, JETSON_ORIN_NANO]
+    description: 动态窗口法局部避障，实时速度空间采样避障
+    difficulty: 3
+    parameters:
+      - name: max_vel_x
+        type: float
+        default: 0.5
+      - name: max_vel_theta
+        type: float
+        default: 1.0
+      - name: acc_lim_x
+        type: float
+        default: 0.5
+      - name: acc_lim_theta
+        type: float
+        default: 2.0
+      - name: sim_time
+        type: float
+        default: 1.5
+      - name: sim_granularity
+        type: float
+        default: 0.025
+    input_spec:
+      current_velocity: list[float]
+      laser_scan: list[float]
+      global_path: list[list[float]]
+    output_spec:
+      cmd_vel: list[float]
+    code_template: dwa_local_planner
